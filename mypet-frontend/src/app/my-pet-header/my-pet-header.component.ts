@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-my-pet-header',
   standalone: true,
-  imports: [],
+  imports: [RouterModule],
   templateUrl: './my-pet-header.component.html',
   styleUrl: './my-pet-header.component.css'
 })

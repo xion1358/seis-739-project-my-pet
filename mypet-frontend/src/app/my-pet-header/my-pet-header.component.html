@@ -1,7 +1,8 @@
 <div class="header">
+
     <div class="Title">
-        <img routerLink="/LandingPageComponent" src="assets/MyPetTitle.png" alt="Header"/>
+        <img routerLink="/" src="assets/MyPetTitle.png" alt="Header"/>
     </div>
     
-    <button class="LoginButton" (click)="login()">Log in</button>
+    <button [routerLink]="['/log-in']" class="LoginButton">Log in</button>
 </div>

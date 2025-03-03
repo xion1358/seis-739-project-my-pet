@@ -1,0 +1,16 @@
+<div class="LoginContainer">
+    <form class="LoginForm">
+        <div class="FormEntry">
+            <label for="username">Username</label>
+            <input id="username" type="text" placeholder="Username" required>
+        </div>
+
+        <div class="FormEntry">
+            <label for="password">Password</label>
+            <input id="password" type="password" placeholder="Password" required>
+        </div>
+
+        <button type="submit" class="SubmitButton">Submit</button>
+        <button type="submit" class="GoBackButton" [routerLink]="['/']">Go Back</button>
+    </form>
+</div>

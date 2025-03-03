@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { MyPetHeaderComponent } from "../my-pet-header/my-pet-header.component";
 
 @Component({
   selector: 'app-landing-page',
