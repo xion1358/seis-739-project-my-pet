@@ -1,5 +1,5 @@
 /* Style for container */
-.login-container {
+.registration-container {
     width: 100vw;
     height: calc(100vh - 100px);
     background-color: #CAE023;
@@ -15,8 +15,7 @@
   font-weight: bold;
 }
 
-
-.login-form {
+.registration-form {
     width: 250px;
     margin: 0 auto;
     padding: 20px;
