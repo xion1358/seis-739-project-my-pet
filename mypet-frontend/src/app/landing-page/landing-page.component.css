@@ -1,0 +1,72 @@
+/* Styles for registration logo/text */
+.registration-logo {
+    width: 100%;
+    height: 380px;
+    background-color: #E7F33D;
+    border-bottom: 1px solid black;
+    font-size: 25px;
+    place-items: center;
+    display:grid;
+}
+
+.creature-image-container {
+    height: 150px;
+}
+
+.creature-image-container img {
+    height: 180px;
+    width: 180px;
+    object-fit: cover;
+}
+
+.registration-button{
+    height: 40px;
+    width: 160px;
+    background-color: #14AE5C;
+    color: white;
+    border: 1px solid black;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.5s;
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+.registration-button:hover {
+    background-color: #66D98D;
+}
+
+/* Styles for videos */
+.video-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.video-placeholder {
+    width: 500px;
+    height: 400px;
+    background-color: #dcdcdc;
+    border: 2px solid #aaa;
+    color: #333;
+    margin: 50px 10px 0px 10px;
+}
+
+/* Styles for description */
+.game-description {
+    margin-top: 40px; 
+    margin-left: 100px;
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, auto);
+    gap: 10px;
+    list-style-type:circle;
+    padding: 0;
+}
+.description-title {
+    font-weight: bold;
+}
+
+.description-text {
+    height: 80px;
+    width: 215px;
+}

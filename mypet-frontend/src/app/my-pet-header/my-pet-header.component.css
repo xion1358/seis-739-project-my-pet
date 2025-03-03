@@ -1,0 +1,42 @@
+.header {
+    background-color: white;
+    height: 100px;
+    width: 100%;
+    border-bottom: 1px black solid;
+    display: flex;
+}
+
+.Title {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header img{
+    height: 100px;
+    width: 400px;
+    overflow: hidden;
+    object-fit:cover;
+    padding-top: 15px;
+}
+
+.LoginButton {
+    height: 40px;
+    width: 160px;
+    background-color: #CAE023;
+    color: black;
+    padding: 10px 40px;
+    border: 1px solid black;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.5s;
+    right: 20px;;
+    margin-top: 25px;
+    position: absolute;
+}
+
+.LoginButton:hover {
+    background-color: #FDFFBE;
+}
