@@ -1,0 +1,5 @@
+<configuration>
+    <root level="OFF">
+    </root>
+    <logger name="com.mypetserver" level="OFF" />
+</configuration>

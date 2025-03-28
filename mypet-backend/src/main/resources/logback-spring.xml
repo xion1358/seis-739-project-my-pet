@@ -1,0 +1,75 @@
+<configuration>
+    <!-- Log Path -->
+    <property name="LOG_PATH" value="logs" />
+
+    <!-- Console Output: outputs logs to console -->
+    <appender name="CONSOLE_APPENDER" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- APP LOGS: saves current/last session -->
+    <appender name="APP_LOGS_APPENDER" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_PATH}/application.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Rolling LOGS: saves all logs in a rolling appender policy (max 3 files x 10 mb) -->
+    <appender name="ROLLING_LOGS_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/rollingApplication.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/application.%i.log</fileNamePattern>
+            <maxHistory>3</maxHistory>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <maxFileSize>10MB</maxFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Debug LOGS: saves debug level logs from current/last session -->
+    <appender name="DEBUG_LOGS_APPENDER" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_PATH}/debug.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- Error LOGS: saves error level logs from current/last session -->
+    <appender name="ERROR_LOGS_APPENDER" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_PATH}/error.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- Configuration -->
+    <root level="info">
+        <appender-ref ref="CONSOLE_APPENDER" />
+        <appender-ref ref="APP_LOGS_APPENDER" />
+        <appender-ref ref="ROLLING_LOGS_APPENDER" />
+    </root>
+
+    <logger name="com.mypetserver" level="debug">
+        <appender-ref ref="DEBUG_LOGS_APPENDER" /> <!--will filter only debug logs (see above filter) -->
+        <appender-ref ref="ERROR_LOGS_APPENDER" /> <!--will filter only error logs (see above filter) -->
+    </logger>
+</configuration>
