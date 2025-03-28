@@ -4,14 +4,14 @@ import { PhaserGame } from '../game/phaser-game.component';
 import { MainMenu } from '../game/scenes/MainMenu';
 import { CommonModule } from '@angular/common';
 import { EventBus } from '../game/EventBus';
-import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
+
 import { appRoutes } from './app.routes';
 import { MyPetHeaderComponent } from "./my-pet-header/my-pet-header.component";
 
 @Component({
     selector: 'app-root',
     standalone: true,
-    imports: [CommonModule, RouterOutlet, PhaserGame, HttpClientModule, MyPetHeaderComponent],
+    imports: [CommonModule, RouterOutlet, PhaserGame, MyPetHeaderComponent],
     templateUrl: './app.component.html'
 })
 export class AppComponent 

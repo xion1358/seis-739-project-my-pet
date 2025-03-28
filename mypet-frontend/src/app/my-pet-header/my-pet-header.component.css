@@ -21,7 +21,7 @@
     padding-top: 15px;
 }
 
-.LoginButton {
+.header-button {
     height: 40px;
     width: 160px;
     background-color: #CAE023;
@@ -37,6 +37,6 @@
     position: absolute;
 }
 
-.LoginButton:hover {
+.LogButton:hover {
     background-color: #FDFFBE;
 }

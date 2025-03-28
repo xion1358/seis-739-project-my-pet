@@ -3,7 +3,7 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "template-angular": {
+        "mypet": {
             "projectType": "application",
             "schematics": {},
             "root": "",
@@ -11,14 +11,17 @@
             "prefix": "app",
             "architect": {
                 "build": {
-                    "builder": "@angular-devkit/build-angular:application",
+                    "builder": "@angular-builders/custom-webpack:browser",
                     "options": {
+                        "main": "src/main.ts",
+                        "customWebpackConfig": {
+                            "path": "custom-webpack.config.ts"
+                        },
                         "allowedCommonJsDependencies": [
                             "phaser"
                         ],
-                        "outputPath": "dist/template-angular",
+                        "outputPath": "dist/mypet",
                         "index": "src/index.html",
-                        "browser": "src/main.ts",
                         "polyfills": [
                             "zone.js"
                         ],
@@ -57,13 +60,13 @@
                     "defaultConfiguration": "production"
                 },
                 "serve": {
-                    "builder": "@angular-devkit/build-angular:dev-server",
+                    "builder": "@angular-builders/custom-webpack:dev-server",
                     "configurations": {
                         "production": {
-                            "buildTarget": "template-angular:build:production"
+                            "buildTarget": "mypet:build:production"
                         },
                         "development": {
-                            "buildTarget": "template-angular:build:development"
+                            "buildTarget": "mypet:build:development"
                         }
                     },
                     "defaultConfiguration": "development",
@@ -74,7 +77,7 @@
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                        "buildTarget": "template-angular:build"
+                        "buildTarget": "mypet:build"
                     }
                 },
                 "test": {

@@ -4,5 +4,9 @@
         <img routerLink="/" src="assets/MyPetTitle.png" alt="Header"/>
     </div>
     
-    <button [routerLink]="['/log-in']" class="LoginButton">Log in</button>
+    <button *ngIf="!loggedIn; else displayLogoff" [routerLink]="['/log-in']" class="header-button">Log in</button>
+    
+    <ng-template #displayLogoff>
+        <button [routerLink]="['/log-in']" class="header-button" (click)="logoff()">Log off</button>
+    </ng-template>
 </div>
