@@ -14,14 +14,10 @@ export class LogInComponent {
   public username: string = '';
   public password: string = '';
 
-  private loginStatus = false;
-
   constructor(private _authServ: AuthenticationService) {}
 
   public login(form: NgForm): void {
-    this.loginStatus = false;
     if (!form.valid) {
-      this.loginStatus = false;
       return;
     } else {
       this._authServ.login([this.username, this.password]);

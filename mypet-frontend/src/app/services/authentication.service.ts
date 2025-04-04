@@ -15,7 +15,9 @@ export class AuthenticationService {
   private loggedInStatus = new BehaviorSubject<boolean>(false);
   loggedInStatus$ = this.loggedInStatus.asObservable();
 
-  constructor(private _http: HttpClient, private _router: Router) { }
+  constructor(private _http: HttpClient, private _router: Router) { 
+    this.loggedInStatus.next(!!localStorage.getItem("token"));
+  }
 
   /**
    * Initializes login authentication in server side through an api call
@@ -33,9 +35,53 @@ export class AuthenticationService {
         this._router.navigate(['/mypage']);
       },
       error: () => {
-        alert("Error logging in. Please try again");
+        alert("Error logging in. Please try again.");
       }
     });
+  }
+
+  /**
+   * Initializes registration in server side through an api call
+   */
+  public registration(data: string[]): void {
+
+    const body = {username: data[0], displayName: data[1], email: data[2], password: data[3]};
+
+    this._http.post(this._serverURL + "/registration", body)
+    .subscribe ({
+      next: (res: any) => {
+        this.saveData(res);
+        console.log("Registration Done");
+        this.loggedInStatus.next(true);
+        this._router.navigate(['/mypage']);
+      },
+      error: () => {
+        alert("Error registering. Please try again.");
+      }
+    });
+  }
+
+  /**
+   * Initializes rechecking the token with the server and updating the login status in front-end
+   */
+  public validateLogin() {
+
+    if (localStorage.getItem("username") && localStorage.getItem("token")) {
+      const headers = {
+        Authorization: 'Bearer ' + localStorage.getItem("token")
+      };
+
+      this._http.post(this._serverURL + "/validate", null, {headers})
+      .subscribe({
+        error: () => {
+          alert("You've been logged off. Please sign in again.");
+          this.logoff();
+          this._router.navigate(['/log-in']);
+        }
+      });
+    } else {
+      this._router.navigate(['/']);
+    }
   }
 
   /**
@@ -56,8 +102,8 @@ export class AuthenticationService {
     localStorage.removeItem("token");
   }
 
-  public getLoggedStatus(): Observable<boolean> {
-    return this.loggedInStatus.asObservable();
+  public getLoggedStatus(): boolean {
+    return this.loggedInStatus.getValue();
   }
 
   

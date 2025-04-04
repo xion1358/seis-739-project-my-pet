@@ -1,20 +1,25 @@
 <div class="registration-container">
     <div class="form-title">Registration</div>
 
-    <form class="registration-form">
+    <form class="registration-form" #f="ngForm" (ngSubmit)="register(f)">
         <div class="form-entry">
             <label for="username">Username</label>
-            <input id="username" type="text" placeholder="Username" required>
+            <input name="username" [(ngModel)]="username" id="username" type="text" placeholder="Username" required>
         </div>
 
         <div class="form-entry">
-            <label for="password">Password</label>
-            <input id="password" type="password" placeholder="Password" required>
+            <label for="displayname">Display Name</label>
+            <input name="displayName" [(ngModel)]="displayName" id="displayname" type="text" placeholder="Display Name" required>
         </div>
 
         <div class="form-entry">
             <label for="email">Email</label>
-            <input id="email" type="email" placeholder="Email" required>
+            <input name="email" [(ngModel)]="email" id="email" type="email" placeholder="Email" required>
+        </div>
+
+        <div class="form-entry">
+            <label for="password">Password</label>
+            <input name="password" [(ngModel)]="password" id="password" type="password" placeholder="Password" required>
         </div>
 
         <button type="submit" class="submit-button">Submit</button>

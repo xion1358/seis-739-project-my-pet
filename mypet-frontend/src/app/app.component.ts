@@ -7,6 +7,7 @@ import { EventBus } from '../game/EventBus';
 
 import { appRoutes } from './app.routes';
 import { MyPetHeaderComponent } from "./my-pet-header/my-pet-header.component";
+import { AuthenticationService } from './services/authentication.service';
 
 @Component({
     selector: 'app-root',
@@ -128,5 +129,11 @@ export class AppComponent
     //     }
 
     // }
+
+    constructor(private _authService: AuthenticationService) {}
+
+    ngOnInit() {
+        this._authService.validateLogin();
+      }
 
 }
