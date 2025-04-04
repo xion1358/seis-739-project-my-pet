@@ -50,6 +50,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(requests -> {
            requests.requestMatchers("/login").permitAll();
+           requests.requestMatchers("/registration").permitAll();
            requests.anyRequest().authenticated();
         });
 

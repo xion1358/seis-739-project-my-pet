@@ -1,0 +1,41 @@
+package com.mypetserver.mypetserver.dto;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+
+import java.util.Objects;
+
+@Getter
+public class RegistrationResponse {
+    private final String username;
+    private final String token;
+
+    @JsonCreator
+    public RegistrationResponse(@JsonProperty("username") String username, @JsonProperty("token") String token) {
+        this.username = username;
+        this.token = token;
+    }
+
+    @Override
+    public boolean equals(Object otherRegistrationResponseObj) {
+        if (this == otherRegistrationResponseObj) {
+            return true;
+        }
+
+        else if (otherRegistrationResponseObj == null || this.getClass() != otherRegistrationResponseObj.getClass()) {
+            return false;
+        }
+
+        else {
+            RegistrationResponse otherRegistrationRes = (RegistrationResponse) otherRegistrationResponseObj;
+            return this.username.equals(otherRegistrationRes.username) &&
+                    this.token.equals(otherRegistrationRes.token);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.username, this.token);
+    }
+}

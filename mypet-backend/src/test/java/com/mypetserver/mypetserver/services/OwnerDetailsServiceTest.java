@@ -30,7 +30,11 @@ public class OwnerDetailsServiceTest {
         MockitoAnnotations.openMocks(this);
 
         userDetails = null;
-        owner = new Owner();
+        owner = new Owner(
+                "mockOwner",
+                "mockDisplayName",
+                "mockEmail",
+                "mockPassword");
     }
 
     @Test

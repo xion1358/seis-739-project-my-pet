@@ -29,4 +29,15 @@ public class Owner {
     @Column(name = "password")
     private String password;
 
+    public Owner(String username, String displayName, String email, String password) {
+        this.username = username;
+        this.displayName = displayName;
+        this.email = email;
+        this.password = password;
+    }
+
+    public Owner() {
+
+    }
+
 }

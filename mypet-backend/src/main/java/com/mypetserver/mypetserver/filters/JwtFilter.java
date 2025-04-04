@@ -19,6 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.crypto.SecretKey;
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * This class defines the filter to be used for authentication of a given token
@@ -39,6 +40,7 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = getJWTToken(request);
+        logger.info("JWT Token: " + token);
 
         if (token != null && validateJWTToken(token)) {
             String username = this.parseJWTToken(token).getSubject();
@@ -60,7 +62,8 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private boolean validateJWTToken(String token) {
-        return this.parseJWTToken(token) != null;
+        Claims claims = this.parseJWTToken(token);
+        return claims != null && !claims.getExpiration().before(new Date());
     }
 
     private Claims parseJWTToken(String token) {
