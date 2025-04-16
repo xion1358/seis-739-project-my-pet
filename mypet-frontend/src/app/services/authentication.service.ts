@@ -32,7 +32,8 @@ export class AuthenticationService {
         this.saveData(res);
 
         this.loggedInStatus.next(true);
-        this._router.navigate(['/mypage']);
+        //this._router.navigate(['/mypage']);
+        this._router.navigate(['/single-pet-view']);
       },
       error: () => {
         alert("Error logging in. Please try again.");
@@ -53,7 +54,8 @@ export class AuthenticationService {
         this.saveData(res);
         console.log("Registration Done");
         this.loggedInStatus.next(true);
-        this._router.navigate(['/mypage']);
+        //this._router.navigate(['/mypage']);
+        this._router.navigate(['/single-pet-view']);
       },
       error: () => {
         alert("Error registering. Please try again.");
@@ -73,6 +75,9 @@ export class AuthenticationService {
 
       this._http.post(this._serverURL + "/validate", null, {headers})
       .subscribe({
+        next: () => {
+          this._router.navigate(['/single-pet-view']); // TODO: Change this to navigate to the correct screen if user refreshed/close page and reopen
+        },
         error: () => {
           alert("You've been logged off. Please sign in again.");
           this.logoff();

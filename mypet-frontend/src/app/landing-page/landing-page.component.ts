@@ -9,7 +9,6 @@ import { RouterModule } from '@angular/router';
   styleUrl: './landing-page.component.css'
 })
 export class LandingPageComponent {
-  public register(){
-    alert("Registering...");
-  }
+
+  constructor(){}
 }
