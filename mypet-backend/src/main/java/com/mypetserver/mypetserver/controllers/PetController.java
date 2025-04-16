@@ -22,16 +22,13 @@ public class PetController {
 
     private final LoginService loginService;
     private final RegistrationService registrationService;
-    private final TokenService tokenService;
 
     @Autowired
     public PetController(
             LoginService loginService,
-            RegistrationService registrationService,
-            TokenService tokenService) {
+            RegistrationService registrationService) {
         this.loginService = loginService;
         this.registrationService = registrationService;
-        this.tokenService = tokenService;
     }
 
     // Post requests
