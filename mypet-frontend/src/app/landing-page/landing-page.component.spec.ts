@@ -20,4 +20,10 @@ describe('LandingPageComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should display the registration button', () => {
+    const button = fixture.debugElement.nativeElement.querySelector('button[name="registration-button"]');
+    expect(button).toBeTruthy();
+  });
+
 });
