@@ -1,0 +1,87 @@
+import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Utility } from '../Utilities/Utility';
+import { Pet } from '../models/pet';
+import { Observable, Subject } from 'rxjs';
+import { Client, Message } from '@stomp/stompjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class PetService {
+  private _serverURL = environment.serverURL;
+  private _stompClient: Client;
+  private _messageSubject = new Subject<any>();
+
+  public messages$ = this._messageSubject.asObservable();
+
+  constructor(
+    private _http: HttpClient, 
+    private _router: Router,
+    private _route: ActivatedRoute) { }
+
+  public queryForPets(): Observable<Pet[]>
+  {
+    try {
+      if (Utility.getTokenHeader() && Utility.getUserName()) {
+        const headers = Utility.getTokenHeader();
+        const params = new HttpParams().set('owner', Utility.getUserName());
+
+        return this._http.get<Pet[]>(this._serverURL + "/get-pets", {headers: headers, params: params});
+      }
+    } catch (error: any) {
+      console.error("Encountered error while trying to query pets: ", error.message);
+      this._router.navigate(['/']);
+    }
+
+    return new Observable<Pet[]>();
+  }
+
+  public registerPetForViewing(petId: number): Observable<Pet> {
+    const headers = Utility.getTokenHeader();
+    const params = new HttpParams().set('id', petId);
+  
+    return this._http.post<Pet>(this._serverURL + "/register-pet-for-viewing", null, { headers, params });
+  }
+  
+
+  public connect(petId: number): void {
+    try {
+      const token = localStorage.getItem('token');
+
+      this._stompClient = new Client({
+        brokerURL: environment.webSocketURL,
+        connectHeaders: {
+          'Authorization': 'Bearer ' + token
+        },
+        reconnectDelay: 5000,
+        onConnect: () =>
+        {
+          //console.log("Connected to WebSocket");
+          this.subscribeToPet(petId);
+        },
+        onStompError: (frame) => {
+          console.error('STOMP Error:', frame);
+          this._stompClient.activate();
+        }
+      });
+
+      this._stompClient.activate();
+    } catch (error: any) {
+      console.error("Error trying to connect to websocket: ", error.message);
+    }
+  }
+
+  public subscribeToPet(petId: number): void {
+    this._stompClient.subscribe(`/topic/pet/${petId}`, (message: Message) => {
+      const pet = JSON.parse(message.body);
+      this._messageSubject.next(pet);
+    });
+  }
+
+  public unsubscribeFromViewingPet(): void {
+    this._stompClient.deactivate();
+  }
+}

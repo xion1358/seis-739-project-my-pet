@@ -1,17 +1,37 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { environment } from '../../environments/environment';
+import { PetService } from '../services/pet.service';
+import { Pet } from '../models/pet';
+import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-my-page',
   standalone: true,
-  imports: [],
+  imports: [RouterModule, CommonModule],
   templateUrl: './my-page.component.html',
   styleUrl: './my-page.component.css'
 })
 export class MyPageComponent {
-  private _serverURL = environment.serverURL;
+  public myPets: Pet[];
 
-  constructor(private _http: HttpClient) {}
+  constructor(
+    private _petService: PetService,
+    private _router: Router
+  ) {}
+
+  ngOnInit() {
+    this._petService.queryForPets().subscribe({
+      next: (pets: Pet[]) => {
+        this.myPets = pets;
+      },
+      error: (e) => {
+        console.error("Error getting pets: ", e);
+      }
+    })
+  }
+
+  public viewPet(petId: number): void {
+    this._router.navigate(["/single-pet-view", petId]);
+  }
 
 }

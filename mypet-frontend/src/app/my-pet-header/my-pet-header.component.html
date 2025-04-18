@@ -1,7 +1,9 @@
 <div class="header">
 
     <div class="Title">
-        <img routerLink="/" src="assets/MyPetTitle.png" alt="Header"/>
+        <a [routerLink]="loggedIn ? '/mypage' : '/'">
+            <img src="assets/MyPetTitle.png" alt="Header"/>
+        </a>
     </div>
     
     <button *ngIf="!loggedIn; else displayLogoff" [routerLink]="['/log-in']" class="header-button">Log in</button>

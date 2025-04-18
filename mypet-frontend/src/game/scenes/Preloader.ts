@@ -32,8 +32,29 @@ export class Preloader extends Scene
         //  Load the assets for the game - Replace with your own assets
         this.load.setPath('assets');
 
+        // Load misc.
         this.load.image('logo', 'MyPetTitle.png');
         this.load.image('star', 'star.png');
+        this.load.image('petCreature', 'MyPetCreature.png');
+
+        // Load Sprites
+        this.load.spritesheet('cat-body', 'sprites/cat-body-sprite.png', {
+            frameWidth: 150,
+            frameHeight: 150
+        });
+        this.load.spritesheet('cat-eyes', 'sprites/cat-eyes-sprite.png', {
+            frameWidth: 150,
+            frameHeight: 150
+        });
+
+        this.load.spritesheet('dog-body', 'sprites/dog-body-sprite.png', {
+            frameWidth: 150,
+            frameHeight: 150
+        });
+        this.load.spritesheet('dog-eyes', 'sprites/dog-eyes-sprite.png', {
+            frameWidth: 150,
+            frameHeight: 150
+        });
     }
 
     create ()

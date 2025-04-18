@@ -37,6 +37,6 @@
     position: absolute;
 }
 
-.LogButton:hover {
-    background-color: #FDFFBE;
+.header-button:hover {
+    background-color: #45a049;
 }

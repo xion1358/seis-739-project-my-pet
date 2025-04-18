@@ -1,21 +1,22 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import { Utility } from '../Utilities/Utility';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
   private _serverURL = environment.serverURL;
-  // private _headers = new HttpHeaders({
-  //   authorization: 'Basic ' + localStorage.getItem("token")
-  // });
   private loggedInStatus = new BehaviorSubject<boolean>(false);
   loggedInStatus$ = this.loggedInStatus.asObservable();
 
-  constructor(private _http: HttpClient, private _router: Router) { 
+  constructor(
+    private _http: HttpClient, 
+    private _router: Router) { 
+
     this.loggedInStatus.next(!!localStorage.getItem("token"));
   }
 
@@ -32,8 +33,7 @@ export class AuthenticationService {
         this.saveData(res);
 
         this.loggedInStatus.next(true);
-        //this._router.navigate(['/mypage']);
-        this._router.navigate(['/single-pet-view']);
+        this._router.navigate(['/mypage']);
       },
       error: () => {
         alert("Error logging in. Please try again.");
@@ -54,7 +54,6 @@ export class AuthenticationService {
         this.saveData(res);
         console.log("Registration Done");
         this.loggedInStatus.next(true);
-        //this._router.navigate(['/mypage']);
         this._router.navigate(['/single-pet-view']);
       },
       error: () => {
@@ -67,26 +66,35 @@ export class AuthenticationService {
    * Initializes rechecking the token with the server and updating the login status in front-end
    */
   public validateLogin() {
+    try {
+      if (this.loggedInStatus.value) {
+        const headers = { headers: Utility.getTokenHeader() };
 
-    if (localStorage.getItem("username") && localStorage.getItem("token")) {
-      const headers = {
-        Authorization: 'Bearer ' + localStorage.getItem("token")
-      };
-
-      this._http.post(this._serverURL + "/validate", null, {headers})
-      .subscribe({
-        next: () => {
-          this._router.navigate(['/single-pet-view']); // TODO: Change this to navigate to the correct screen if user refreshed/close page and reopen
-        },
-        error: () => {
-          alert("You've been logged off. Please sign in again.");
-          this.logoff();
-          this._router.navigate(['/log-in']);
-        }
-      });
-    } else {
+        this._http.post(this._serverURL + "/validate", null, headers)
+          .subscribe({
+            next: () =>
+            {
+              if (sessionStorage.getItem('lastNavigatedRoute')?.length === 1)
+              {
+                this._router.navigate(['/mypage']);
+              } else
+              {
+                this._router.navigate([sessionStorage.getItem('lastNavigatedRoute')]);
+              }
+            },
+            error: () =>
+            {
+              alert("You've been logged off. Please sign in again.");
+              this.logoff();
+              this._router.navigate(['/log-in']);
+            }
+          });
+      }
+    } catch (error: any) {
+      console.error("Encountered error while trying to validate login: ", error.message);
       this._router.navigate(['/']);
     }
+    
   }
 
   /**

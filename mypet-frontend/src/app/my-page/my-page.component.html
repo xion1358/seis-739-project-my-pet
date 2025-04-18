@@ -1,7 +1,23 @@
-<div class="welcome-container">
-    <h1>Welcome to MyPage</h1>
-
-  <!-- <button (click)="sendHelloRequest()">Say Hello</button> -->
-
-  </div>
+<div class="pet-list-container">
+  <h2>My Pets</h2>
   
+  <div *ngIf="!myPets || myPets.length === 0" class="no-pets">
+    <p>No pets found for the current user.</p>
+  </div>
+
+  <div class="pet-list">
+    <div *ngFor="let pet of myPets" class="pet-card" (click)="viewPet(pet.petId)">
+      <h3>{{ pet.petName }}</h3>
+      <img src="../../assets/sprites/{{pet.petType.toLowerCase()}}-open-eyes-sprite.png"/>
+    
+      <div class="pet-info">
+        <p><strong>Love Level:</strong> {{ pet.petLoveLevel }}</p>
+        <p><strong>Hunger Level:</strong> {{ pet.petHungerLevel }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="select-new-pet-container">
+    <button class="btn select-new-pet-btn" [routerLink]="['/pet-selection']">Select a New Pet</button>
+  </div>
+</div>

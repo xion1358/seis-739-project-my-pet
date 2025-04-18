@@ -1,0 +1,79 @@
+.pet-selection-container {
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .pet-options-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+  }
+  
+  .pet-option {
+    position: relative;
+    width: 200px;
+    height: 260px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  
+  
+  .pet-option:hover {
+    border-color: #888;
+    transform: scale(1.03);
+  }
+  
+  .pet-option.selected {
+    border-color: #4CAF50;
+    box-shadow: 0 0 12px #4CAF50;
+  }
+  
+  .pet-body,
+  .pet-eyes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 200px;
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    z-index: 1;
+  }
+  
+  .pet-eyes {
+    z-index: 2;
+  }
+  
+  .pet-label {
+    position: absolute;
+    top: 205px;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+  .confirm-button-wrapper {
+    margin-top: 30px;
+    text-align: center;
+  }
+  
+  .confirm-button {
+    padding: 12px 24px;
+    font-size: 18px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .confirm-button:hover {
+    background-color: #45a049;
+  }
+  
+  

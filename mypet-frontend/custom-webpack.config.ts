@@ -8,7 +8,7 @@ dotenv.config({ path: path.resolve(__dirname, '.env') });
 module.exports = {
   plugins: [
     new webpack.DefinePlugin({
-      // 'process.env.TEST': JSON.stringify(process.env["TEST"]),
+      'global': 'window'
     })
   ]
 };
