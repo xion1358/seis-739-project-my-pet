@@ -1,9 +1,6 @@
 package com.mypetserver.mypetserver.filters;
 
-import com.mypetserver.mypetserver.services.OwnerDetailsService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import com.mypetserver.mypetserver.services.TokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,9 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.util.Date;
 
 /**
  * This class defines the filter to be used for authentication of a given token
@@ -29,21 +24,21 @@ import java.util.Date;
 public class JwtFilter extends OncePerRequestFilter {
     private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
 
-    private static final String SECRET = System.getenv("SECRET"); // TODO: Migrate secret to cloud key vault
-    private final SecretKey secretKey = Keys.hmacShaKeyFor((SECRET.getBytes()));
     private final UserDetailsService ownerDetailsService;
+    private final TokenService tokenService;
 
-    public JwtFilter(UserDetailsService ownerDetailsService) {
+    public JwtFilter(UserDetailsService ownerDetailsService, TokenService tokenService) {
         this.ownerDetailsService = ownerDetailsService;
+        this.tokenService = tokenService;
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = getJWTToken(request);
+        String token = this.tokenService.getJWTToken(request);
         logger.info("JWT Token: " + token);
 
-        if (token != null && validateJWTToken(token)) {
-            String username = this.parseJWTToken(token).getSubject();
+        if (token != null && this.tokenService.validateJWTToken(token)) {
+            String username = this.tokenService.parseJWTToken(token).getSubject();
 
             UserDetails userDetails = this.ownerDetailsService.loadUserByUsername(username);
 
@@ -51,31 +46,5 @@ public class JwtFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response);
-    }
-
-    private String getJWTToken(HttpServletRequest request) {
-        String header = request.getHeader("Authorization");
-        if (header != null && header.startsWith("Bearer ")) {
-            return header.substring(7);
-        }
-        return null;
-    }
-
-    private boolean validateJWTToken(String token) {
-        Claims claims = this.parseJWTToken(token);
-        return claims != null && !claims.getExpiration().before(new Date());
-    }
-
-    private Claims parseJWTToken(String token) {
-        try {
-            return Jwts.parser()
-                    .verifyWith(this.secretKey)
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
-        } catch (Exception e) {
-            logger.error("Failed to parse token: {}", e.getMessage());
-            return null;
-        }
     }
 }

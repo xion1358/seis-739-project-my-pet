@@ -1,6 +1,5 @@
 package com.mypetserver.mypetserver.services;
 
-import com.mypetserver.mypetserver.filters.JwtFilter;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -28,9 +27,50 @@ public class TokenService {
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(new Date())
-                // Sets expiration to 10 mins TODO: update to a value that makes more sense for production
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10))
+                // Sets expiration to 5 hrs TODO: update to a value that makes more sense for production
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 5))
                 .signWith(this.secretKey)
                 .compact();
+    }
+
+    public String getJWTToken(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+        if (header != null && header.startsWith("Bearer ")) {
+            return header.substring(7);
+        }
+        return null;
+    }
+
+    public boolean validateJWTToken(String token) {
+        Claims claims = this.parseJWTToken(token);
+        return claims != null && !claims.getExpiration().before(new Date());
+    }
+
+    public Claims parseJWTToken(String token) {
+        try {
+            return Jwts.parser()
+                    .verifyWith(this.secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (Exception e) {
+            logger.error("Failed to parse token: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    public String parseUsernameFromJWT(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .verifyWith(this.secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+            return claims.getSubject();
+
+        } catch (Exception e) {
+            logger.error("Failed to parse username: {}", e.getMessage());
+            return null;
+        }
     }
 }

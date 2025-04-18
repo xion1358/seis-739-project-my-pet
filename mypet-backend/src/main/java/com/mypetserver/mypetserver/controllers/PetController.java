@@ -1,9 +1,9 @@
 package com.mypetserver.mypetserver.controllers;
 
 import com.mypetserver.mypetserver.dto.*;
+import com.mypetserver.mypetserver.managers.PetManager;
 import com.mypetserver.mypetserver.services.LoginService;
 import com.mypetserver.mypetserver.services.RegistrationService;
-import com.mypetserver.mypetserver.services.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This Class defines RESTful APIs for requests to the server
@@ -22,13 +25,16 @@ public class PetController {
 
     private final LoginService loginService;
     private final RegistrationService registrationService;
+    private final PetManager petManager;
 
     @Autowired
     public PetController(
             LoginService loginService,
-            RegistrationService registrationService) {
+            RegistrationService registrationService,
+            PetManager petManager) {
         this.loginService = loginService;
         this.registrationService = registrationService;
+        this.petManager = petManager;
     }
 
     // Post requests
@@ -53,8 +59,21 @@ public class PetController {
         }
     }
 
+    // Simply return ok as the filter will handle the validation when the request comes in
     @PostMapping("/validate")
     public ResponseEntity<Void> validate(HttpServletRequest request) {
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/get-pets")
+    public ResponseEntity<List<Pet>> getPets(HttpServletRequest request) {
+        ArrayList<Pet> pets = this.petManager.getPets(request.getParameter("owner"));
+        return ResponseEntity.ok(pets);
+    }
+
+    @PostMapping("/register-pet-for-viewing")
+    public ResponseEntity<Pet> registerPetForViewing(HttpServletRequest request) {
+        Pet registeredPet = this.petManager.registerPet(Integer.parseInt(request.getParameter("id")));
+        return ResponseEntity.ok(registeredPet);
     }
 }

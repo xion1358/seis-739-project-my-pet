@@ -1,6 +1,7 @@
 package com.mypetserver.mypetserver.config;
 
 import com.mypetserver.mypetserver.filters.JwtFilter;
+import com.mypetserver.mypetserver.services.TokenService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +28,14 @@ public class SecurityConfig {
     private final UserDetailsService ownerDetailsService;
     private final PasswordEncoder encoder;
     private final CorsConfig corsConfig;
+    private final TokenService tokenService;
 
     @Autowired
-    public SecurityConfig(UserDetailsService ownerDetailsService, PasswordEncoder encoder, CorsConfig corsConfig) {
+    public SecurityConfig(UserDetailsService ownerDetailsService, PasswordEncoder encoder, CorsConfig corsConfig, TokenService tokenService) {
         this.ownerDetailsService = ownerDetailsService;
         this.encoder = encoder;
         this.corsConfig = corsConfig;
+        this.tokenService = tokenService;
     }
 
     @Bean
@@ -50,12 +53,13 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(requests -> {
            requests.requestMatchers("/login").permitAll();
-           requests.requestMatchers("/registration").permitAll();
+            requests.requestMatchers("/ws-pet/**").permitAll();
+            requests.requestMatchers("/registration").permitAll();
            requests.anyRequest().authenticated();
         });
 
         http.addFilterBefore(this.corsConfig.corsFilter(), CorsFilter.class);
-        http.addFilterBefore(new JwtFilter(this.ownerDetailsService), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtFilter(this.ownerDetailsService, this.tokenService), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
