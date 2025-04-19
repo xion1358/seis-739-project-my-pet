@@ -12,9 +12,6 @@ const config: Phaser.Types.Core.GameConfig = {
     scene: [
         Boot,
         Preloader,
-        // MainMenu,
-        // MainGame,
-        // GameOver,
         MyPet
     ],
     scale: {

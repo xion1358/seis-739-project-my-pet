@@ -73,6 +73,7 @@ export class PhaserGame implements OnInit
         if (this._petService) {
             this._petService.unsubscribeFromViewingPet();
         }
+
         EventBus.off('current-scene-ready', this._onSceneReady);
     }
 

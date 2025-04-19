@@ -7,6 +7,7 @@ import { Pet } from '../../app/models/pet';
 
 export class MyPet extends Scene
 {
+    loadingText: GameObjects.Text;
     petData: Pet;
     stompClient: Client;
     background: GameObjects.Image;
@@ -24,7 +25,12 @@ export class MyPet extends Scene
     create()
     {
         // Background
-        this.background = this.add.image(400, 300, 'background');
+        //this.background = this.add.image(400, 300, 'background');
+        this.background = this.add.image(400, 300, 'loading-background');
+        this.loadingText = this.add.text(400, 300, 'Loading your pet...', {
+            fontSize: '24px',
+            color: '#ffffff'
+        }).setOrigin(0.5);
 
         this.events.on('shutdown', this.cleanup, this);
         this.events.on('destroy', this.cleanup, this);
@@ -80,6 +86,11 @@ export class MyPet extends Scene
             yoyo: true
         });
         this.scheduleBlinking(petData);
+
+        if (this.loadingText) {
+            this.background.setTexture("background");
+            this.loadingText.destroy();
+        }
     }
 
     get shouldFaceLeft(): boolean {
