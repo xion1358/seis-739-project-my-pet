@@ -7,10 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +21,7 @@ public class PetManager {
     private final Random random = new Random();
     private final PetRepository petRepository;
     private final Map<Integer, Integer> movementCounters = new HashMap<>();
+    private final Map<Integer, Set<String>> petSubscribers = new ConcurrentHashMap<>();
 
     public PetManager(SimpMessagingTemplate messagingTemplate,
                       PetRepository petRepository) {
@@ -45,19 +43,17 @@ public class PetManager {
     private void updatePetMovement(Pet pet) {
         boolean shouldRest = random.nextDouble() < 0.3;
 
-        if (!shouldRest) {
+        if (!shouldRest || movementCounters.get(pet.getPetId()) == null) {
             int locationToMoveTo = 100 + random.nextInt(500);
             String direction = locationToMoveTo > pet.getPetXLocation() ? "right" : "left";
             pet.setPetXLocation(locationToMoveTo);
-            pet.setPetYLocation(390);
             pet.setPetDirection(direction);
 
             int count = movementCounters.getOrDefault(pet.getPetId(), 0) + 1;
             movementCounters.put(pet.getPetId(), count);
 
-            if (count >= 6) {
+            if (count % 6 == 0) {
                 petRepository.save(pet);
-                movementCounters.put(pet.getPetId(), 0);
             }
 
             messagingTemplate.convertAndSend("/topic/pet/" + pet.getPetId(), pet);
@@ -81,5 +77,27 @@ public class PetManager {
 
     public ArrayList<Pet> getPets(String ownerName) {
         return new ArrayList<>(petRepository.getPetsByPetOwner(ownerName));
+    }
+
+    public synchronized void addSubscriber(int petId, String sessionId) {
+        petSubscribers.computeIfAbsent(petId, k -> ConcurrentHashMap.newKeySet()).add(sessionId);
+    }
+
+    public synchronized void removeSubscriber(int petId, String sessionId) {
+        Set<String> sessions = petSubscribers.get(petId);
+        if (sessions != null) {
+            sessions.remove(sessionId);
+            if (sessions.isEmpty()) {
+                //logger.info("pet {} has no subscribers, removing", petId);
+                petSubscribers.remove(petId);
+                unregisterPet(petId);
+            }
+        }
+    }
+
+    public synchronized void removeSubscriberBySessionId(String sessionId) {
+        for (Map.Entry<Integer, Set<String>> entry : petSubscribers.entrySet()) {
+            removeSubscriber(entry.getKey(), sessionId);
+        }
     }
 }
