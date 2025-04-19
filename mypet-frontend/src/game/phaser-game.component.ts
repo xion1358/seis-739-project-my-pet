@@ -20,7 +20,6 @@ export class PhaserGame implements OnInit
     game: Phaser.Game;
     messageSub: Subscription;
     _onSceneReady: (scene: Phaser.Scene) => void;
-    initialPetData: Pet;
 
     constructor(
         private _petService: PetService,
@@ -39,9 +38,6 @@ export class PhaserGame implements OnInit
             this.scene = scene;
 
             if (scene instanceof MyPet){
-                if (this.initialPetData) {
-                    scene.updatePetData(this.initialPetData);
-                }
                 this.messageSub = this._petService.messages$.subscribe(petData => {
                     const pet = petData as Pet;
                     if (pet) {
@@ -88,7 +84,6 @@ export class PhaserGame implements OnInit
                     next: (pet) =>
                     {
                         //console.log("Registered pet:", pet);
-                        this.initialPetData = pet;
                         this._petService.connect(petIdFromParam);
                     },
                     error: () => {
