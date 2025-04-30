@@ -38,23 +38,38 @@ export class Preloader extends Scene
         //     this.load.image(`dummy${i}`, 'sprites/cat-body-sprite.png');
         // }
 
-        // Load Sprites
-        this.load.spritesheet('cat-body', 'sprites/cat-body-sprite.png', {
+        // Load Pet Sprites
+        this.load.spritesheet('cat-body', 'sprites/pets/cat-body-sprite.png', {
             frameWidth: 150,
             frameHeight: 150
         });
-        this.load.spritesheet('cat-eyes', 'sprites/cat-eyes-sprite.png', {
+        this.load.spritesheet('cat-eyes', 'sprites/pets/cat-eyes-sprite.png', {
             frameWidth: 150,
             frameHeight: 150
         });
 
-        this.load.spritesheet('dog-body', 'sprites/dog-body-sprite.png', {
+        this.load.spritesheet('dog-body', 'sprites/pets/dog-body-sprite.png', {
             frameWidth: 150,
             frameHeight: 150
         });
-        this.load.spritesheet('dog-eyes', 'sprites/dog-eyes-sprite.png', {
+        this.load.spritesheet('dog-eyes', 'sprites/pets/dog-eyes-sprite.png', {
             frameWidth: 150,
             frameHeight: 150
+        });
+
+        // Load Food Sprites
+        this.load.image('kibble', 'sprites/food/kibble-food.png');
+        this.load.image('nutritional-meal', 'sprites/food/nutritional-meal-food.png');
+
+        // Load Button Sprites
+        this.load.image('food-button', 'sprites/buttons/food-button.png');
+        this.load.image('kibble-button', 'sprites/buttons/kibble-button.png');
+        this.load.image('nutritional-meal-button', 'sprites/buttons/nutritional-meal-button.png');
+
+        this.load.on('complete', () => {
+            this.textures.get('food-button').setFilter(Phaser.Textures.FilterMode.NEAREST);
+            this.textures.get('kibble-button').setFilter(Phaser.Textures.FilterMode.NEAREST);
+            this.textures.get('nutritional-meal-button').setFilter(Phaser.Textures.FilterMode.NEAREST);
         });
     }
 

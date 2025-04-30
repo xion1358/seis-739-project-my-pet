@@ -8,4 +8,5 @@ export interface Pet {
     petXLocation: number;
     petYLocation: number;
     petDirection: string;
+    petAction: string;
   }

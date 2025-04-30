@@ -11,18 +11,29 @@ const config: Phaser.Types.Core.GameConfig = {
     backgroundColor: '#D9D9D9',
     scene: [
         Boot,
-        Preloader,
-        MyPet
+        Preloader
     ],
     scale: {
         mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH,
+    },
+    physics: {
+        default: "arcade",
+        arcade: {
+            gravity: {x: 0, y: 500},
+            debug: false
+        }
     }
 };
 
-const StartGame = (parent: string) => {
+const StartGame = (parent: string, createFoodCallback: (petId: number, food: string) => void) => {
+    const game = new Game({...config, parent});
+    game.scene.add('MyPet', MyPet, false);
+    game.scene.start('MyPet', {
+        createPetFood: createFoodCallback
+    });
 
-    return new Game({ ...config, parent });
+    return game;
 
 }
 

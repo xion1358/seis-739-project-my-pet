@@ -6,6 +6,7 @@ import { Utility } from '../Utilities/Utility';
 import { Pet } from '../models/pet';
 import { Observable, Subject } from 'rxjs';
 import { Client, Message } from '@stomp/stompjs';
+import { FoodTypes } from '../models/foottypes';
 
 @Injectable({
   providedIn: 'root'
@@ -76,12 +77,27 @@ export class PetService {
 
   public subscribeToPet(petId: number): void {
     this._stompClient.subscribe(`/topic/pet/${petId}`, (message: Message) => {
-      const pet = JSON.parse(message.body);
-      this._messageSubject.next(pet);
+      const petData = JSON.parse(message.body);
+      this._messageSubject.next(petData);
     });
   }
 
   public unsubscribeFromViewingPet(): void {
     this._stompClient.deactivate();
+  }
+
+  public createPetFood(petId: number, foodType: string): void {
+    const headers = Utility.getTokenHeader();
+    const params = new HttpParams().set('id', petId).set('food', foodType);
+  
+    this._http.post<boolean>(this._serverURL + "/create-pet-food", null, { headers, params })
+        .subscribe({
+            next: (response) => {
+                console.log('Food created successfully:', response);
+            },
+            error: (err) => {
+                console.error('Error creating food:', err);
+            }
+        });
   }
 }

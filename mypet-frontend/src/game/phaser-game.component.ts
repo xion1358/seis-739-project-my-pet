@@ -7,6 +7,7 @@ import { PetService } from "../app/services/pet.service";
 import { Pet } from "../app/models/pet";
 import { Subscription } from "rxjs";
 import { ActivatedRoute } from "@angular/router";
+import { Food } from "../app/models/food";
 
 @Component({
     selector: 'phaser-game',
@@ -32,16 +33,19 @@ export class PhaserGame implements OnInit
     {
         this.viewPet();
 
-        this.game = StartGame('game-container');
+        this.game = StartGame('game-container', this.createFood.bind(this));
 
         this._onSceneReady = (scene: Phaser.Scene) => {
             this.scene = scene;
 
             if (scene instanceof MyPet){
                 this.messageSub = this._petService.messages$.subscribe(petData => {
-                    const pet = petData as Pet;
+                    const pet = petData.pet as Pet;
+                    const foodList = petData.food as Food[];
+                    const action = petData.action;
+                    const actionTime = petData.actionTime;
                     if (pet) {
-                        scene.updatePetData(pet);
+                        scene.updatePet(pet, foodList, action, actionTime);
                         //console.log("Got pet: " + JSON.stringify(petData));
                     }
                 });
@@ -81,7 +85,7 @@ export class PhaserGame implements OnInit
 
             if (petIdFromParam) {
                 this._petService.registerPetForViewing(petIdFromParam).subscribe({
-                    next: (pet) =>
+                    next: () =>
                     {
                         //console.log("Registered pet:", pet);
                         this._petService.connect(petIdFromParam);
@@ -95,5 +99,9 @@ export class PhaserGame implements OnInit
                 console.error('Pet ID is missing');
             }
         });
+    }
+
+    createFood(petId: number, food: string){
+        this._petService.createPetFood(petId, food);
     }
 }

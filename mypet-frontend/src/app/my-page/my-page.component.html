@@ -8,7 +8,7 @@
   <div class="pet-list">
     <div *ngFor="let pet of myPets" class="pet-card" (click)="viewPet(pet.petId)">
       <h3>{{ pet.petName }}</h3>
-      <img src="../../assets/sprites/{{pet.petType.toLowerCase()}}-open-eyes-sprite.png"/>
+      <img src="../../assets/sprites/pets/{{pet.petType.toLowerCase()}}-open-eyes-sprite.png"/>
     
       <div class="pet-info">
         <p><strong>Love Level:</strong> {{ pet.petLoveLevel }}</p>

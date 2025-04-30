@@ -8,10 +8,10 @@
         (click)="onSelectPet(petType)">
 
         <div class="pet-body"
-          [style.backgroundImage]="'url(assets/sprites/' + petType + '-body-sprite.png)'"></div>
+          [style.backgroundImage]="'url(assets/sprites/pets/' + petType + '-body-sprite.png)'"></div>
   
         <div class="pet-eyes"
-          [style.backgroundImage]="'url(assets/sprites/' + petType + '-eyes-sprite.png)'"></div>
+          [style.backgroundImage]="'url(assets/sprites/pets/' + petType + '-eyes-sprite.png)'"></div>
   
         <p class="pet-label">{{ petType.charAt(0).toUpperCase() + petType.slice(1) }}</p>
       </div>
