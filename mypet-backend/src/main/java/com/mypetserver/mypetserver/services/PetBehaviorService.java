@@ -85,8 +85,8 @@ public class PetBehaviorService {
     private PetBehavior handleEating(Pet pet, List<Food> petFood) {
         Food food = findClosestFood(pet, petFood);
         if (food != null) {
-            pet.setPetHungerLevel(Math.min(100, pet.getPetHungerLevel() + food.getFoodType().getFeedHunger()));
-            pet.setPetLoveLevel(Math.min(100, pet.getPetLoveLevel() + food.getFoodType().getFeedLove()));
+            pet.setPetHungerLevel(Math.min(100, pet.getPetHungerLevel() + food.getFoodType().getSatiateHunger()));
+            pet.setPetAffectionLevel(Math.min(100, pet.getPetAffectionLevel() + food.getFoodType().getSatiateAffection()));
             this.foodRepository.removeFoodByFoodId(food.getFoodId());
             petFood.remove(food);
             this.petFoodService.getAllPetsFoods().put(pet.getPetId(), petFood);

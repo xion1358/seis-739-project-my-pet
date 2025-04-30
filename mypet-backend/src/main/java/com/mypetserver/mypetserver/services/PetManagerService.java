@@ -64,8 +64,8 @@ public class PetManagerService {
             if (pet.getPetHungerLevel() > 0){
                 pet.setPetHungerLevel(pet.getPetHungerLevel() - 1);
             }
-            if (pet.getPetLoveLevel() > 0) {
-                pet.setPetLoveLevel(pet.getPetLoveLevel() - 1);
+            if (pet.getPetAffectionLevel() > 0) {
+                pet.setPetAffectionLevel(pet.getPetAffectionLevel() - 1);
             }
         }
 

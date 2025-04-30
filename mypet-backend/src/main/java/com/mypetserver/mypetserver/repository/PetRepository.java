@@ -25,7 +25,7 @@ public interface PetRepository extends JpaRepository<Pet, Integer> {
 
     @Modifying
     @Transactional
-    @Query("UPDATE Pet p SET p.petLoveLevel = CASE WHEN p.petLoveLevel <= 90 THEN p.petLoveLevel + 10 ELSE 100 END WHERE p.petId = :petId")
+    @Query("UPDATE Pet p SET p.petAffectionLevel = CASE WHEN p.petAffectionLevel <= 90 THEN p.petAffectionLevel + 10 ELSE 100 END WHERE p.petId = :petId")
     void petAPet(@Param("petId") int petId);
 
 }

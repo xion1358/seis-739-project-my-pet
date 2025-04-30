@@ -18,18 +18,18 @@ public class FoodTypes {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "feedhunger")
-    private int feedHunger;
+    @Column(name = "satiatehunger")
+    private int satiateHunger;
 
-    @Column(name = "feedlove")
-    private int feedLove;
+            @Column(name = "satiateaffection")
+    private int satiateAffection;
 
     public FoodTypes() {}
 
-    private FoodTypes(String name, int feedHunger, int feedLove) {
+    private FoodTypes(String name, int satiateHunger, int satiateAffection) {
         this.name = name;
-        this.feedHunger = feedHunger;
-        this.feedLove = feedLove;
+        this.satiateHunger = satiateHunger;
+        this.satiateAffection = satiateAffection;
     }
 
     public static final List<FoodTypes> PREDEFINED_FOOD_TYPES = List.of(

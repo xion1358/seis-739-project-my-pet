@@ -28,8 +28,8 @@ public class Pet {
     @Column(name = "pettype")
     private String petType;
 
-    @Column(name = "petlovelevel")
-    private int petLoveLevel;
+    @Column(name = "petaffectionlevel")
+    private int petAffectionLevel;
 
     @Column(name = "pethungerlevel")
     private int petHungerLevel;
@@ -47,13 +47,13 @@ public class Pet {
     private String petAction;
 
     public Pet(int petId, String petName, String petOwner, String petType,
-               int petLove, int petHunger, int x, int y, String direction,
+               int petAffectionLevel, int petHunger, int x, int y, String direction,
                String petAction) {
         this.petId = petId;
         this.petName = petName;
         this.petOwner = petOwner;
         this.petType = petType;
-        this.petLoveLevel = petLove;
+        this.petAffectionLevel = petAffectionLevel;
         this.petHungerLevel = petHunger;
         this.petXLocation = x;
         this.petYLocation = y;
