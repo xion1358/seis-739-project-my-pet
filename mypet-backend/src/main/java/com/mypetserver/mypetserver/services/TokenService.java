@@ -54,7 +54,7 @@ public class TokenService {
                     .parseSignedClaims(token)
                     .getPayload();
         } catch (Exception e) {
-            logger.error("Failed to parse token: {}", e.getMessage());
+            logger.info("Failed to parse token: {}", e.getMessage());
             return null;
         }
     }

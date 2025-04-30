@@ -2,8 +2,10 @@ package com.mypetserver.mypetserver.services;
 
 import com.mypetserver.mypetserver.entities.Food;
 import com.mypetserver.mypetserver.entities.FoodTypes;
+import com.mypetserver.mypetserver.entities.Pet;
 import com.mypetserver.mypetserver.repository.FoodRepository;
 import com.mypetserver.mypetserver.repository.PetRepository;
+import jakarta.transaction.Transactional;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 
@@ -26,14 +28,17 @@ public class PetFoodService {
         this.foodRepository = foodRepository;
     }
 
+    @Transactional
     public Boolean createPetFood(int petId, String foodName) {
-        if (petRepository.getPetByPetId(petId) != null && foodRepository.getFoodsByPetId(petId).size() < 3) {
+        Pet pet = petRepository.findByPetId(petId);
+        if (pet != null && foodRepository.findFoodByPetIdForUpdate(petId).size() < 3) {
             Food food = new Food(petId, FoodTypes.getFoodTypeByName(foodName), (int) (Math.random() * (700 - 100 + 1)) + 100, 400);
             foodRepository.save(food);
-            allPetsFoods.put(petId, this.foodRepository.getFoodsByPetId(petId));
+            allPetsFoods.put(petId, this.foodRepository.findFoodByPetId(petId));
             return true;
         }
         return false;
     }
+
 
 }

@@ -2,10 +2,7 @@ package com.mypetserver.mypetserver.controllers;
 
 import com.mypetserver.mypetserver.dto.*;
 import com.mypetserver.mypetserver.entities.Pet;
-import com.mypetserver.mypetserver.services.PetManagerService;
-import com.mypetserver.mypetserver.services.LoginService;
-import com.mypetserver.mypetserver.services.PetFoodService;
-import com.mypetserver.mypetserver.services.RegistrationService;
+import com.mypetserver.mypetserver.services.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,17 +26,20 @@ public class PetController {
     private final RegistrationService registrationService;
     private final PetManagerService petManagerService;
     private final PetFoodService petFoodService;
+    private final PetPlayService petPlayService;
 
     @Autowired
     public PetController(
             LoginService loginService,
             RegistrationService registrationService,
             PetManagerService petManagerService,
-            PetFoodService petFoodService) {
+            PetFoodService petFoodService,
+            PetPlayService petPlayService) {
         this.loginService = loginService;
         this.registrationService = registrationService;
         this.petManagerService = petManagerService;
         this.petFoodService = petFoodService;
+        this.petPlayService = petPlayService;
     }
 
     // Post requests
@@ -86,5 +86,11 @@ public class PetController {
     public ResponseEntity<Boolean> createPetFood(HttpServletRequest request) {
         logger.info("Creating pet food for {}", request.getParameter("id"));
         return ResponseEntity.ok(this.petFoodService.createPetFood(Integer.parseInt(request.getParameter("id")), request.getParameter("food")));
+    }
+
+    @PostMapping("/pet-a-pet")
+    public ResponseEntity<Boolean> petAPet(HttpServletRequest request) {
+        logger.info("Petting pet {}", request.getParameter("id"));
+        return ResponseEntity.ok(this.petPlayService.petAPet(Integer.parseInt(request.getParameter("id"))));
     }
 }

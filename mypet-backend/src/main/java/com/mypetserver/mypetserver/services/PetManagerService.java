@@ -1,15 +1,14 @@
 package com.mypetserver.mypetserver.services;
 
-import com.mypetserver.mypetserver.entities.Food;
 import com.mypetserver.mypetserver.entities.Pet;
-import com.mypetserver.mypetserver.models.PetActions;
-import com.mypetserver.mypetserver.models.PetBehavior;
+import com.mypetserver.mypetserver.models.PetData;
 import com.mypetserver.mypetserver.repository.FoodRepository;
 import com.mypetserver.mypetserver.repository.PetRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,8 +18,6 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class PetManagerService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    public static final int PET_EATING_TIME = 4000;
-    public static final int PET_MOVING_TIME = 6000;
 
     private final SimpMessagingTemplate messagingTemplate;
     private final Map<Integer, Pet> pets = new ConcurrentHashMap<>();
@@ -52,45 +49,44 @@ public class PetManagerService {
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
             for (Pet pet : pets.values()) {
                 int updateCycleCount = movementCounters.getOrDefault(pet.getPetId(), 0) + 1;
-                PetBehavior petBehavior = this.petBehaviorService.getPetBehavior(pet);
 
-                this.petBehaviorService.updatePetHunger(pet, updateCycleCount);
-                this.petFoodService.getAllPetsFoods().computeIfAbsent(pet.getPetId(), id -> foodRepository.getFoodsByPetId(id));
-                List<Food> petFood = this.petFoodService.getAllPetsFoods().getOrDefault(pet.getPetId(), new ArrayList<>());
+                this.petFoodService.getAllPetsFoods().computeIfAbsent(pet.getPetId(), id -> foodRepository.findFoodByPetId(id));
 
-                if (petBehavior != null && petBehavior.getTimeToNextActionInMillis() - System.currentTimeMillis() < 0) {
-                    PetBehavior generatedBehavior = this.petBehaviorService.generateBehavior(pet, petFood);
-
-                    petRepository.save(pet);
-                    sendPetData(pet, petFood,
-                            generatedBehavior.getPetAction().getValue(),
-                            generatedBehavior.getTimeToNextActionInMillis()-System.currentTimeMillis());
-                } else {
-                    PetBehavior noBehavior = new PetBehavior(0, PetActions.IDLE);
-                    sendPetData(pet, petFood,
-                            noBehavior.getPetAction().getValue(),
-                            0);
-                }
+                this.updatePet(pet, updateCycleCount);
 
                 movementCounters.put(pet.getPetId(), updateCycleCount);
             }
         }, 0, 1, TimeUnit.SECONDS);
     }
 
+    private void updatePet(Pet pet, int updateCycleCount) {
+        if (updateCycleCount % 2 == 0) {
+            if (pet.getPetHungerLevel() > 0){
+                pet.setPetHungerLevel(pet.getPetHungerLevel() - 1);
+            }
+            if (pet.getPetLoveLevel() > 0) {
+                pet.setPetLoveLevel(pet.getPetLoveLevel() - 1);
+            }
+        }
+
+        PetData updatedPetData = this.petBehaviorService.updatePetBehavior(pet);
+        this.sendPetData(updatedPetData);
+    }
+
     // Final action to send pet data
-    private void sendPetData(Pet pet, List<Food> petFood, String action, long actionTime) {
+    private void sendPetData(PetData updatedPetData) {
         Map<String, Object> petData = new HashMap<>();
-        petData.put("pet", pet);
-        petData.put("food", petFood);
-        petData.put("action", action);
-        petData.put("actionTime", actionTime);
-        messagingTemplate.convertAndSend("/topic/pet/" + pet.getPetId(), petData);
+        petData.put("pet", updatedPetData.getPet());
+        petData.put("food", updatedPetData.getFood());
+        petData.put("action", updatedPetData.getPetBehavior());
+        petData.put("actionTime", updatedPetData.getActionTime());
+        messagingTemplate.convertAndSend("/topic/pet/" + updatedPetData.getPet().getPetId(), petData);
     }
 
     // Actions to add/remove pet from update cycle
     public Pet registerPet(int petId) {
         if (!pets.containsKey(petId)) {
-            pets.put(petId, petRepository.getPetByPetId(petId));
+            pets.put(petId, petRepository.findByPetId(petId));
         }
         return pets.get(petId);
     }
@@ -107,25 +103,31 @@ public class PetManagerService {
         petSubscribers.computeIfAbsent(petId, k -> ConcurrentHashMap.newKeySet()).add(sessionId);
     }
 
-    public synchronized void removeSubscriber(int petId, String sessionId) {
-        Set<String> sessions = petSubscribers.get(petId);
-        if (sessions != null) {
-            sessions.remove(sessionId);
-            if (sessions.isEmpty()) {
-                //logger.info("pet {} has no subscribers, removing", petId);
-                petRepository.save(petRepository.getPetByPetId(petId));
-                petSubscribers.remove(petId);
-                movementCounters.remove(petId);
-                this.petFoodService.getAllPetsFoods().remove(petId);
-                this.petBehaviorService.getAllPetActions().remove(petId);
-                unregisterPet(petId);
+    public synchronized void updatePetFromRepo(int petId) {
+        pets.put(petId, petRepository.findByPetId(petId));
+    }
+
+    @Transactional
+    public synchronized void removeSubscriberBySessionId(String sessionId) {
+        Iterator<Map.Entry<Integer, Set<String>>> iterator = petSubscribers.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, Set<String>> entry = iterator.next();
+            int petId = entry.getKey();
+            Set<String> sessions = entry.getValue();
+
+            if (sessions != null) {
+                sessions.remove(sessionId);
+                if (sessions.isEmpty()) {
+                    logger.info("Pet {} has been removed from loop because no live sessions", petId);
+                    petRepository.save(petRepository.findByPetId(petId));
+                    iterator.remove();
+                    movementCounters.remove(petId);
+                    this.petFoodService.getAllPetsFoods().remove(petId);
+                    this.petBehaviorService.getAllPetActions().remove(petId);
+                    unregisterPet(petId);
+                }
             }
         }
     }
 
-    public synchronized void removeSubscriberBySessionId(String sessionId) {
-        for (Map.Entry<Integer, Set<String>> entry : petSubscribers.entrySet()) {
-            removeSubscriber(entry.getKey(), sessionId);
-        }
-    }
 }
