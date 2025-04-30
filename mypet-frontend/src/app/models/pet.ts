@@ -3,7 +3,7 @@ export interface Pet {
     petName: string;
     petOwner: string;
     petType: string;
-    petLoveLevel: number;
+    petAffectionLevel: number;
     petHungerLevel: number;
     petXLocation: number;
     petYLocation: number;

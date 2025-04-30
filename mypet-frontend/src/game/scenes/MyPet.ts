@@ -81,7 +81,7 @@ export class MyPet extends Scene
 
         this.foodManager.updateFood(this, foodList, action, this.ground);
         this.hungerBar.updateHungerBar(petData.petHungerLevel);
-        this.affectionBar.updateAffectionBar(petData.petLoveLevel);
+        this.affectionBar.updateAffectionBar(petData.petAffectionLevel);
     }
 
     // One time call to generate initial pet and related items

@@ -1,5 +1,5 @@
 export interface FoodTypes {
     name: string;
-    feedHunger: number;
-    feedLove: number;
+    satiateHunger: number;
+    satiateAffection: number;
   }

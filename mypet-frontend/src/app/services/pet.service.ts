@@ -106,13 +106,13 @@ export class PetService {
     const params = new HttpParams().set('id', petId);
   
     this._http.post<boolean>(this._serverURL + "/pet-a-pet", null, { headers, params })
-        .subscribe({
-            next: (response) => {
-                console.log('Pet loved your pet!');
-            },
-            error: (err) => {
-                console.error('Error trying to pet a pet:', err);
-            }
-        });
+    .subscribe({
+        next: (response) => {
+            console.log('Pet loved your pet!');
+        },
+        error: (err) => {
+            console.error('Error trying to pet a pet:', err);
+        }
+    });
   }
 }
