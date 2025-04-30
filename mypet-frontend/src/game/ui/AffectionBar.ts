@@ -23,5 +23,10 @@ export class AffectionBar {
       this.fill.width = (affection / 100) * fillWidth;
       this.fill.fillColor = affection >= 51 ? 0x00ff00 : affection >= 21 ? 0xffff00 : 0xff0000;
     }
+
+    destroy()
+    {
+      
+    }
   }
   

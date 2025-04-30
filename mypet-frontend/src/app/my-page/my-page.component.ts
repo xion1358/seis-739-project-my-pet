@@ -9,10 +9,11 @@ import { Router, RouterModule } from '@angular/router';
   standalone: true,
   imports: [RouterModule, CommonModule],
   templateUrl: './my-page.component.html',
-  styleUrl: './my-page.component.css'
+  styleUrls: ['./my-page.component.css']
 })
 export class MyPageComponent {
   public myPets: Pet[];
+  public selectedPet: Pet;
 
   constructor(
     private _petService: PetService,
@@ -34,4 +35,11 @@ export class MyPageComponent {
     this._router.navigate(["/single-pet-view", petId]);
   }
 
+  public selectPet(pet: Pet) {
+    this.selectedPet = pet;
+  }
+
+  public abandonPet(pet: Pet) {
+    console.log("Abandoned pet: ", pet.petId);
+  }
 }

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, OnDestroy } from "@angular/core";
 import Phaser from "phaser";
 import StartGame from "./main";
 import { EventBus } from "./EventBus";
@@ -14,13 +14,32 @@ import { Food } from "../app/models/food";
     template: '<div id="game-container"></div>',
     standalone: true,
 })
-export class PhaserGame implements OnInit
-{
+export class PhaserGame implements OnInit, OnDestroy {
 
     scene: Phaser.Scene;
     game: Phaser.Game;
     messageSub: Subscription;
-    _onSceneReady: (scene: Phaser.Scene) => void;
+
+    // ✅ Define the callback ONCE at the class level to keep the same reference
+    private _onSceneReady = (scene: Phaser.Scene) => {
+        this.scene = scene;
+
+        if (scene instanceof MyPet){
+            this.messageSub = this._petService.messages$.subscribe(petData => {
+                const pet = petData.pet as Pet;
+                const foodList = petData.food as Food[];
+                const action = petData.action;
+                const actionTime = petData.actionTime;
+                if (pet) {
+                    scene.updatePet(pet, foodList, action, actionTime);
+                }
+            });
+        }
+
+        if (this.sceneCallback){
+            this.sceneCallback(scene);
+        }
+    };
 
     constructor(
         private _petService: PetService,
@@ -29,47 +48,24 @@ export class PhaserGame implements OnInit
 
     sceneCallback: (scene: Phaser.Scene) => void;
 
-    ngOnInit()
-    {
+    ngOnInit() {
         this.viewPet();
 
-        this.game = StartGame('game-container', 
+        this.game = StartGame(
+            'game-container', 
             this.createFood.bind(this), 
-            this.petAPet.bind(this));
-
-        this._onSceneReady = (scene: Phaser.Scene) => {
-            this.scene = scene;
-
-            if (scene instanceof MyPet){
-                this.messageSub = this._petService.messages$.subscribe(petData => {
-                    const pet = petData.pet as Pet;
-                    const foodList = petData.food as Food[];
-                    const action = petData.action;
-                    const actionTime = petData.actionTime;
-                    if (pet) {
-                        scene.updatePet(pet, foodList, action, actionTime);
-                        //console.log("Got pet: " + JSON.stringify(petData));
-                    }
-                });
-            }
-
-            if (this.sceneCallback)
-            {
-                this.sceneCallback(scene);
-            }
-        }
+            this.petAPet.bind(this)
+        );
 
         EventBus.on('current-scene-ready', this._onSceneReady);
     }
 
-    // Component unmounted
-    ngOnDestroy()
-    {
-        if (this.game)
-        {
+    ngOnDestroy() {
+        if (this.game) {
             this.game.destroy(true);
         }
         if (this.messageSub) {
+            console.log("Message unsub");
             this.messageSub.unsubscribe();
         }
         if (this._petService) {
@@ -79,35 +75,31 @@ export class PhaserGame implements OnInit
         EventBus.off('current-scene-ready', this._onSceneReady);
     }
 
-    viewPet()
-    {
+    viewPet() {
         this._route.paramMap.subscribe(paramMap => {
             const petIdParam = paramMap.get('petId');
             const petIdFromParam = petIdParam ? +petIdParam : null;
 
             if (petIdFromParam) {
                 this._petService.registerPetForViewing(petIdFromParam).subscribe({
-                    next: () =>
-                    {
-                        //console.log("Registered pet:", pet);
+                    next: () => {
                         this._petService.connect(petIdFromParam);
                     },
                     error: () => {
                         alert("Error registering pet. Please try again.");
                     }
                 });
-            } else
-            {
+            } else {
                 console.error('Pet ID is missing');
             }
         });
     }
 
-    createFood(petId: number, food: string){
+    createFood(petId: number, food: string) {
         this._petService.createPetFood(petId, food);
     }
 
-    petAPet(petId: number){
+    petAPet(petId: number) {
         this._petService.petAPet(petId);
     }
 }

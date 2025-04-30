@@ -23,5 +23,10 @@ export class HungerBar {
       this.fill.width = (hunger / 100) * fillWidth;
       this.fill.fillColor = hunger >= 51 ? 0x00ff00 : hunger >= 21 ? 0xffff00 : 0xff0000;
     }
+
+    destroy()
+    {
+      
+    }
   }
   

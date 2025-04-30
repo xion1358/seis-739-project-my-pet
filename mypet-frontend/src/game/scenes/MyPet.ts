@@ -12,41 +12,44 @@ import { AffectionBar } from '../ui/AffectionBar';
 
 export class MyPet extends Scene
 {
-    // Environments
-    ground: GameObjects.Rectangle;
+    // Constants and data
     GROUND_HEIGHT: number = 465;
     GROUND_THICKNESS: number = 40;
-    loadingText: GameObjects.Text;
-    hungerBar: HungerBar;
-    affectionBar: AffectionBar;
-    hoverText: GameObjects.Text;
+    petData: Pet;
 
     // Managers
     petBehaviorManager: PetBehaviorManager;
     foodButtonManager: FoodButtonManager;
     foodManager: FoodManager;
 
-    // Sprite
-    petData: Pet;
+    // Sprites and UI elements
+    ground: GameObjects.Rectangle;
+    loadingText: GameObjects.Text;
     background: GameObjects.Image;
     petBodySprite: Phaser.Physics.Arcade.Sprite;
     petEyesSprite: GameObjects.Sprite;
     petContainer: Phaser.GameObjects.Container;
+    hungerBar: HungerBar;
+    affectionBar: AffectionBar;
+    hoverText: GameObjects.Text;
 
-    // Game mechanics
+    // Game mechanics/outside method calls (IOC)
     createPetFood: any;
     petAPet: any;
+    blinkTimer: Phaser.Time.TimerEvent;
 
     constructor()
     {
         super('MyPet');
     }
 
+    // Initialize IOC method calls
     init(data: any) {
         this.createPetFood = data.createPetFood;
         this.petAPet = data.petAPet;
     }
 
+    // Called when scene is first created
     create()
     {
         // Environment setup
@@ -61,8 +64,8 @@ export class MyPet extends Scene
             color: '#ffffff'
         }).setOrigin(0.5);
 
-        this.events.on('shutdown', this.cleanup, this);
-        this.events.on('destroy', this.cleanup, this);
+        this.events.once('shutdown', this.cleanup, this);
+        this.events.once('destroy', this.cleanup, this);
 
         // Send event for scene ready
         EventBus.emit('current-scene-ready', this);
@@ -76,7 +79,7 @@ export class MyPet extends Scene
         {
             this.generatePet(petData);
         } else {
-            this.petBehaviorManager.updatePetBehavior(this, petData, this.petEyesSprite, this.petContainer, action, actionTime);
+            this.petBehaviorManager.updatePetBehavior(this, petData, this.petContainer, action, actionTime);
         }
 
         this.foodManager.updateFood(this, foodList, action, this.ground);
@@ -116,12 +119,81 @@ export class MyPet extends Scene
             this.background.setTexture("background");
             this.loadingText.destroy();
         }
+
+        // Set up blinking
+        this.scheduleBlinking(petData.petXLocation, this.petEyesSprite);
+    }
+
+    scheduleBlinking(petXLocation: number, petEyesSprite: Phaser.GameObjects.Sprite): void {
+        const blinkInterval = 2000 + (petXLocation % 2000);
+        const blinkOffset = petXLocation % blinkInterval;
+    
+        this.time.delayedCall(blinkOffset, () => {
+            this.blinkTimer = this.time.addEvent({
+                delay: blinkInterval,
+                callback: () => {
+                    if (petEyesSprite && petEyesSprite.anims) {
+                        petEyesSprite.anims.play('blink', true);
+                    }
+                },
+                callbackScope: this,
+                loop: true
+            });
+        });
     }
 
     // Clean up
     cleanup() {
+        // Cleanup managers
         if (this.petBehaviorManager) {
-            this.petBehaviorManager.cleanup();
+            this.petBehaviorManager.destroy();
         }
+
+        // Cleanup assets
+        if (this.ground) {
+            console.log("Destroying ground");
+            this.ground.destroy();
+        }
+
+        if (this.loadingText) {
+            this.loadingText.destroy();
+        }
+
+        if (this.background) {
+            this.background.destroy();
+        }
+    
+        if (this.petContainer) {
+            this.petContainer.destroy(true);
+        }
+    
+        if (this.petBodySprite) {
+            this.petBodySprite.destroy(true);
+        }
+    
+        if (this.petEyesSprite) {
+            this.petEyesSprite.destroy(true);
+        }
+    
+        if (this.hungerBar) {
+            this.hungerBar.destroy();
+        }
+    
+        if (this.affectionBar) {
+            this.affectionBar.destroy();
+        }
+    
+        if (this.hoverText) {
+            this.hoverText.destroy();
+        }
+
+        // Clean up misc.
+        if (this.blinkTimer) {
+            this.blinkTimer.destroy();
+        }
+    
+        // Remove event listeners
+        this.events.off('shutdown', this.cleanup, this);
+        this.events.off('destroy', this.cleanup, this);
     }
 }

@@ -6,15 +6,23 @@
   </div>
 
   <div class="pet-list">
-    <div *ngFor="let pet of myPets" class="pet-card" (click)="viewPet(pet.petId)">
+    <div *ngFor="let pet of myPets"
+         class="pet-card"
+         [class.selected]="selectedPet && selectedPet.petId === pet.petId"
+         (click)="selectPet(pet)">
       <h3>{{ pet.petName }}</h3>
       <img src="../../assets/sprites/pets/{{pet.petType.name.toLowerCase()}}-open-eyes-sprite.png"/>
-    
+
       <div class="pet-info">
         <p><strong>Affection Level:</strong> {{ pet.petAffectionLevel }}</p>
         <p><strong>Hunger Level:</strong> {{ pet.petHungerLevel }}</p>
       </div>
     </div>
+  </div>
+
+  <div class="selected-pet-actions" *ngIf="selectedPet">
+    <button class="btn abandon-btn" (click)="abandonPet(selectedPet)">Abandon Pet</button>
+    <button class="btn view-btn" (click)="viewPet(selectedPet.petId)">View Pet</button>
   </div>
 
   <div class="select-new-pet-container">
