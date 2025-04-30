@@ -1,8 +1,10 @@
+import { PetTypes } from "./pettypes";
+
 export interface Pet {
     petId: number;
     petName: string;
     petOwner: string;
-    petType: string;
+    petType: PetTypes;
     petAffectionLevel: number;
     petHungerLevel: number;
     petXLocation: number;

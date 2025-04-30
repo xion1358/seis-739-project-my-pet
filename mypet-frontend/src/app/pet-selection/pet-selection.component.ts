@@ -1,24 +1,37 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { PetService } from '../services/pet.service';
+import { PetTypes } from '../models/pettypes';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-pet-selection',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './pet-selection.component.html',
   styleUrl: './pet-selection.component.css'
 })
 export class PetSelectionComponent {
-  petTypes = ['cat', 'dog'];
-  selectedPetType: string = 'cat';
+  petTypes: PetTypes[];
+  selectedPetType: string;
+  petName: string = "Fluffy";
 
-  constructor() { }
+  constructor(private _petService: PetService) {}
+
+  ngOnInit() {
+    this._petService.getAllPetTypes();
+    this._petService.petTypes$.subscribe({
+      next: (petTypes) => this.petTypes = petTypes
+    });
+  }
 
   onSelectPet(petType: string): void {
     this.selectedPetType = petType;
   }
 
   confirmSelection(): void {
-    // TODO: Send a request to add the pet selected to the user
+    if (this.selectedPetType) {
+      this._petService.requestPetForOwner(this.petName, this.selectedPetType)
+    }
   }
 }

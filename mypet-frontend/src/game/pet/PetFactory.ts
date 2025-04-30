@@ -8,7 +8,7 @@ export class PetFactory {
     eyesSprite: GameObjects.Sprite
   } {
     const groundHeight = 465;
-    const petType = petData.petType.toLowerCase();
+    const petType = petData.petType.name.toLowerCase();
 
     // Pet body
     const petBodySprite = scene.physics.add.sprite(0, 0, `${petType}-body`)

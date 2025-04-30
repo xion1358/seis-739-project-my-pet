@@ -7,6 +7,7 @@ import { Pet } from '../models/pet';
 import { Observable, Subject } from 'rxjs';
 import { Client, Message } from '@stomp/stompjs';
 import { FoodTypes } from '../models/foottypes';
+import { PetTypes } from '../models/pettypes';
 
 @Injectable({
   providedIn: 'root'
@@ -15,13 +16,14 @@ export class PetService {
   private _serverURL = environment.serverURL;
   private _stompClient: Client;
   private _messageSubject = new Subject<any>();
+  private _petTypesSubject = new Subject<any>();
 
   public messages$ = this._messageSubject.asObservable();
+  public petTypes$ = this._petTypesSubject.asObservable();
 
   constructor(
     private _http: HttpClient, 
-    private _router: Router,
-    private _route: ActivatedRoute) { }
+    private _router: Router) { }
 
   public queryForPets(): Observable<Pet[]>
   {
@@ -112,6 +114,39 @@ export class PetService {
         },
         error: (err) => {
             console.error('Error trying to pet a pet:', err);
+        }
+    });
+  }
+
+  public getAllPetTypes(): void {
+    const headers = Utility.getTokenHeader();
+  
+    this._http.post<PetTypes[]>(this._serverURL + "/pet-types", null, { headers })
+    .subscribe({
+        next: (response: PetTypes[]) => {
+          this._petTypesSubject.next(response);
+        },
+        error: (err) => {
+            console.error('Error trying to pet pet types:', err);
+        }
+    });
+  }
+
+  public requestPetForOwner(petName: string, petType: string): void {
+    const headers = Utility.getTokenHeader();
+    const params = new HttpParams()
+      .set('owner', Utility.getUserName())
+      .set('petName', petName)
+      .set('petType', petType);
+  
+    this._http.post<boolean>(this._serverURL + "/request-a-pet", null, { headers, params })
+    .subscribe({
+        next: (response) => {
+            console.log('Pet Created');
+            this._router.navigate(['/mypage']);
+        },
+        error: (err) => {
+            console.error('Error trying to request a pet', err);
         }
     });
   }

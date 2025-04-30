@@ -1,24 +1,30 @@
 <div class="pet-selection-container">
-    <h2>Select a pet to care for</h2>
-  
-    <div class="pet-options-grid">
-      <div class="pet-option"
-        *ngFor="let petType of petTypes"
-        [class.selected]="petType === selectedPetType"
-        (click)="onSelectPet(petType)">
+  <h2>Select a pet to care for</h2>
 
-        <div class="pet-body"
-          [style.backgroundImage]="'url(assets/sprites/pets/' + petType + '-body-sprite.png)'"></div>
-  
-        <div class="pet-eyes"
-          [style.backgroundImage]="'url(assets/sprites/pets/' + petType + '-eyes-sprite.png)'"></div>
-  
-        <p class="pet-label">{{ petType.charAt(0).toUpperCase() + petType.slice(1) }}</p>
+  <div class="pet-options-grid">
+    <div class="pet-option"
+      *ngFor="let petType of petTypes"
+      [class.selected]="petType.name === selectedPetType"
+      (click)="onSelectPet(petType.name)">
+
+      <div class="pet-body"
+        [style.backgroundImage]="'url(assets/sprites/pets/' + petType.name + '-body-sprite.png)'">
       </div>
-    </div>
-  
-    <div class="confirm-button-wrapper">
-      <button class="confirm-button" (click)="confirmSelection()">Confirm Selection</button>
+
+      <div class="pet-eyes"
+        [style.backgroundImage]="'url(assets/sprites/pets/' + petType.name + '-eyes-sprite.png)'">
+      </div>
+
+      <p class="pet-label">{{ petType.name.charAt(0).toUpperCase() + petType.name.slice(1) }}</p>
     </div>
   </div>
-  
+
+  <div class="pet-name-input-wrapper">
+    <label for="petName">Enter a name for your pet:</label>
+    <input id="petName" type="text" [(ngModel)]="petName" placeholder="Fluffy" />
+  </div>
+
+  <div class="confirm-button-wrapper">
+    <button class="confirm-button" (click)="confirmSelection()">Confirm Selection</button>
+  </div>
+</div>
