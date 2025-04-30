@@ -2,6 +2,7 @@ package com.mypetserver.mypetserver.controllers;
 
 import com.mypetserver.mypetserver.dto.*;
 import com.mypetserver.mypetserver.entities.Pet;
+import com.mypetserver.mypetserver.entities.PetTypes;
 import com.mypetserver.mypetserver.services.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -92,5 +93,18 @@ public class PetController {
     public ResponseEntity<Boolean> petAPet(HttpServletRequest request) {
         logger.info("Petting pet {}", request.getParameter("id"));
         return ResponseEntity.ok(this.petPlayService.petAPet(Integer.parseInt(request.getParameter("id"))));
+    }
+
+    @PostMapping("/pet-types")
+    public ResponseEntity<List<PetTypes>> getPetTypes(HttpServletRequest request) {
+        return ResponseEntity.ok(this.petManagerService.getAllPetTypes());
+    }
+
+    @PostMapping("/request-a-pet")
+    public ResponseEntity<Boolean> getPetForOwner(HttpServletRequest request) {
+        String ownerName = request.getParameter("owner");
+        String petName = request.getParameter("petName");
+        String petType = request.getParameter("petType");
+        return ResponseEntity.ok(this.petManagerService.generateANewPetForOwner(ownerName, petName, petType));
     }
 }

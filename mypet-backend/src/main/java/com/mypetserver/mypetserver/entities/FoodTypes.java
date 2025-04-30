@@ -21,7 +21,7 @@ public class FoodTypes {
     @Column(name = "satiatehunger")
     private int satiateHunger;
 
-            @Column(name = "satiateaffection")
+    @Column(name = "satiateaffection")
     private int satiateAffection;
 
     public FoodTypes() {}

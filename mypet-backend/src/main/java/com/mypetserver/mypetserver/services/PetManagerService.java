@@ -1,6 +1,8 @@
 package com.mypetserver.mypetserver.services;
 
 import com.mypetserver.mypetserver.entities.Pet;
+import com.mypetserver.mypetserver.entities.PetTypes;
+import com.mypetserver.mypetserver.models.PetActions;
 import com.mypetserver.mypetserver.models.PetData;
 import com.mypetserver.mypetserver.repository.FoodRepository;
 import com.mypetserver.mypetserver.repository.PetRepository;
@@ -130,4 +132,23 @@ public class PetManagerService {
         }
     }
 
+    public List<PetTypes> getAllPetTypes(){
+        return PetTypes.PREDEFINED_PET_TYPES;
+    }
+
+    public Boolean generateANewPetForOwner(String ownerName, String petName, String petType) {
+        Pet newPet = new Pet(
+                petName,
+                ownerName,
+                PetTypes.getPetTypeByName(petType),
+                50,
+                50,
+                300,
+                390,
+                "right",
+                PetActions.IDLE.getValue()
+                );
+        this.petRepository.save(newPet);
+        return true;
+    }
 }

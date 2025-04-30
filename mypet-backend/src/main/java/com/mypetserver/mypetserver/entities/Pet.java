@@ -1,9 +1,6 @@
 package com.mypetserver.mypetserver.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +13,7 @@ import lombok.Setter;
 @Table(name = "pets")
 public class Pet {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "petid")
     private int petId;
 
@@ -25,8 +23,9 @@ public class Pet {
     @Column(name = "petowner")
     private String petOwner;
 
-    @Column(name = "pettype")
-    private String petType;
+    @ManyToOne
+    @JoinColumn(name = "pettype", referencedColumnName = "name")
+    private PetTypes petType;
 
     @Column(name = "petaffectionlevel")
     private int petAffectionLevel;
@@ -46,10 +45,9 @@ public class Pet {
     @Column(name = "petaction")
     private String petAction;
 
-    public Pet(int petId, String petName, String petOwner, String petType,
+    public Pet(String petName, String petOwner, PetTypes petType,
                int petAffectionLevel, int petHunger, int x, int y, String direction,
                String petAction) {
-        this.petId = petId;
         this.petName = petName;
         this.petOwner = petOwner;
         this.petType = petType;
