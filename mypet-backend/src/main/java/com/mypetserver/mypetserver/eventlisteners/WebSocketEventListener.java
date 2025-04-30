@@ -1,6 +1,6 @@
 package com.mypetserver.mypetserver.eventlisteners;
 
-import com.mypetserver.mypetserver.managers.PetManager;
+import com.mypetserver.mypetserver.services.PetManagerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
@@ -13,10 +13,10 @@ import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 public class WebSocketEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketEventListener.class);
-    private final PetManager petManager;
+    private final PetManagerService petManagerService;
 
-    public WebSocketEventListener(PetManager petManager) {
-        this.petManager = petManager;
+    public WebSocketEventListener(PetManagerService petManagerService) {
+        this.petManagerService = petManagerService;
     }
 
     @EventListener
@@ -24,7 +24,7 @@ public class WebSocketEventListener {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = headerAccessor.getSessionId();
 
-        petManager.removeSubscriberBySessionId(sessionId);
+        petManagerService.removeSubscriberBySessionId(sessionId);
     }
 
     @EventListener
@@ -37,7 +37,7 @@ public class WebSocketEventListener {
         if (destination != null && destination.startsWith("/topic/pet/")) {
             try {
                 int petId = Integer.parseInt(destination.replace("/topic/pet/", ""));
-                petManager.addSubscriber(petId, sessionId);
+                petManagerService.addSubscriber(petId, sessionId);
             } catch (NumberFormatException ignored) {}
         }
     }

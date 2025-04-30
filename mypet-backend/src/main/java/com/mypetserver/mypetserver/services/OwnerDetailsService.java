@@ -1,7 +1,7 @@
 package com.mypetserver.mypetserver.services;
 
-import com.mypetserver.mypetserver.dto.Owner;
-import com.mypetserver.mypetserver.dto.User;
+import com.mypetserver.mypetserver.entities.Owner;
+import com.mypetserver.mypetserver.models.User;
 import com.mypetserver.mypetserver.repository.OwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

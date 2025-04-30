@@ -1,7 +1,6 @@
 package com.mypetserver.mypetserver.services;
 
-import com.mypetserver.mypetserver.dto.Owner;
-import com.mypetserver.mypetserver.dto.User;
+import com.mypetserver.mypetserver.entities.Owner;
 import com.mypetserver.mypetserver.repository.OwnerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

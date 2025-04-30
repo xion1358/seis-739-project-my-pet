@@ -1,6 +1,6 @@
 package com.mypetserver.mypetserver.repository;
 
-import com.mypetserver.mypetserver.dto.Owner;
+import com.mypetserver.mypetserver.entities.Owner;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 

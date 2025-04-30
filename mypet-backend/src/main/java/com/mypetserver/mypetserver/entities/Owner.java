@@ -1,4 +1,4 @@
-package com.mypetserver.mypetserver.dto;
+package com.mypetserver.mypetserver.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

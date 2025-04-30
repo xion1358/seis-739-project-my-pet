@@ -1,4 +1,4 @@
-package com.mypetserver.mypetserver.dto;
+package com.mypetserver.mypetserver.models;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

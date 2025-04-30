@@ -1,8 +1,10 @@
 package com.mypetserver.mypetserver.controllers;
 
 import com.mypetserver.mypetserver.dto.*;
-import com.mypetserver.mypetserver.managers.PetManager;
+import com.mypetserver.mypetserver.entities.Pet;
+import com.mypetserver.mypetserver.services.PetManagerService;
 import com.mypetserver.mypetserver.services.LoginService;
+import com.mypetserver.mypetserver.services.PetFoodService;
 import com.mypetserver.mypetserver.services.RegistrationService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
@@ -25,16 +27,19 @@ public class PetController {
 
     private final LoginService loginService;
     private final RegistrationService registrationService;
-    private final PetManager petManager;
+    private final PetManagerService petManagerService;
+    private final PetFoodService petFoodService;
 
     @Autowired
     public PetController(
             LoginService loginService,
             RegistrationService registrationService,
-            PetManager petManager) {
+            PetManagerService petManagerService,
+            PetFoodService petFoodService) {
         this.loginService = loginService;
         this.registrationService = registrationService;
-        this.petManager = petManager;
+        this.petManagerService = petManagerService;
+        this.petFoodService = petFoodService;
     }
 
     // Post requests
@@ -67,13 +72,19 @@ public class PetController {
 
     @GetMapping("/get-pets")
     public ResponseEntity<List<Pet>> getPets(HttpServletRequest request) {
-        ArrayList<Pet> pets = this.petManager.getPets(request.getParameter("owner"));
+        ArrayList<Pet> pets = this.petManagerService.getPets(request.getParameter("owner"));
         return ResponseEntity.ok(pets);
     }
 
     @PostMapping("/register-pet-for-viewing")
     public ResponseEntity<Pet> registerPetForViewing(HttpServletRequest request) {
-        Pet registeredPet = this.petManager.registerPet(Integer.parseInt(request.getParameter("id")));
+        Pet registeredPet = this.petManagerService.registerPet(Integer.parseInt(request.getParameter("id")));
         return ResponseEntity.ok(registeredPet);
+    }
+
+    @PostMapping("/create-pet-food")
+    public ResponseEntity<Boolean> createPetFood(HttpServletRequest request) {
+        logger.info("Creating pet food for {}", request.getParameter("id"));
+        return ResponseEntity.ok(this.petFoodService.createPetFood(Integer.parseInt(request.getParameter("id")), request.getParameter("food")));
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EnableJpaRepositories("com.mypetserver.mypetserver.repository")
-@EntityScan("com.mypetserver.mypetserver.dto")
+@EntityScan("com.mypetserver.mypetserver.entities")
 public class MypetserverApplication {
 
 	private static final Logger logger = LoggerFactory.getLogger(MypetserverApplication.class);

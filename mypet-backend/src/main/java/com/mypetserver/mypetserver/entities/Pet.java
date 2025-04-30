@@ -1,4 +1,4 @@
-package com.mypetserver.mypetserver.dto;
+package com.mypetserver.mypetserver.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -43,7 +43,12 @@ public class Pet {
     @Column(name = "petdirection")
     private String petDirection;
 
-    public Pet(int petId, String petName, String petOwner, String petType, int petLove, int petHunger, int x, int y, String direction) {
+    @Column(name = "petaction")
+    private String petAction;
+
+    public Pet(int petId, String petName, String petOwner, String petType,
+               int petLove, int petHunger, int x, int y, String direction,
+               String petAction) {
         this.petId = petId;
         this.petName = petName;
         this.petOwner = petOwner;
@@ -53,6 +58,7 @@ public class Pet {
         this.petXLocation = x;
         this.petYLocation = y;
         this.petDirection = direction;
+        this.petAction = petAction;
     }
 
     public Pet() {

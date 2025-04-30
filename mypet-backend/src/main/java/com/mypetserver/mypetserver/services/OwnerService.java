@@ -1,6 +1,6 @@
 package com.mypetserver.mypetserver.services;
 
-import com.mypetserver.mypetserver.dto.Owner;
+import com.mypetserver.mypetserver.entities.Owner;
 import com.mypetserver.mypetserver.repository.OwnerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
