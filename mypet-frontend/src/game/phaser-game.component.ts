@@ -33,7 +33,9 @@ export class PhaserGame implements OnInit
     {
         this.viewPet();
 
-        this.game = StartGame('game-container', this.createFood.bind(this));
+        this.game = StartGame('game-container', 
+            this.createFood.bind(this), 
+            this.petAPet.bind(this));
 
         this._onSceneReady = (scene: Phaser.Scene) => {
             this.scene = scene;
@@ -103,5 +105,9 @@ export class PhaserGame implements OnInit
 
     createFood(petId: number, food: string){
         this._petService.createPetFood(petId, food);
+    }
+
+    petAPet(petId: number){
+        this._petService.petAPet(petId);
     }
 }

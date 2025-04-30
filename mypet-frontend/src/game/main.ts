@@ -26,11 +26,14 @@ const config: Phaser.Types.Core.GameConfig = {
     }
 };
 
-const StartGame = (parent: string, createFoodCallback: (petId: number, food: string) => void) => {
+const StartGame = (parent: string, 
+    createFoodCallback: (petId: number, food: string) => void, 
+    createPetAPetCallback: (petId: number) => void) => {
     const game = new Game({...config, parent});
     game.scene.add('MyPet', MyPet, false);
     game.scene.start('MyPet', {
-        createPetFood: createFoodCallback
+        createPetFood: createFoodCallback,
+        petAPet: createPetAPetCallback,
     });
 
     return game;

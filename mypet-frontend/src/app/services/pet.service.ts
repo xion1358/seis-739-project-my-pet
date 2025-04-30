@@ -100,4 +100,19 @@ export class PetService {
             }
         });
   }
+
+  public petAPet(petId: number): void {
+    const headers = Utility.getTokenHeader();
+    const params = new HttpParams().set('id', petId);
+  
+    this._http.post<boolean>(this._serverURL + "/pet-a-pet", null, { headers, params })
+        .subscribe({
+            next: (response) => {
+                console.log('Pet loved your pet!');
+            },
+            error: (err) => {
+                console.error('Error trying to pet a pet:', err);
+            }
+        });
+  }
 }
