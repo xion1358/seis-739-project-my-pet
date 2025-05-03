@@ -13,7 +13,7 @@ import lombok.Setter;
 @Table(name = "pets")
 public class Pet {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "petid")
     private int petId;
 

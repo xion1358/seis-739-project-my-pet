@@ -73,4 +73,14 @@ public class TokenService {
             return null;
         }
     }
+
+    // Currently checks just the owner name. Makes sure the owner name is not spoofed.
+    public boolean validateParameters(HttpServletRequest request, String token) {
+        String ownerName = request.getParameter("owner");
+        if (ownerName == null) {
+            return true;
+        }
+        return ownerName.equals(this.parseUsernameFromJWT(token));
+    }
+
 }

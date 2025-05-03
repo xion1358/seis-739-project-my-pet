@@ -37,7 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = this.tokenService.getJWTToken(request);
         logger.info("JWT Token: " + token);
 
-        if (token != null && this.tokenService.validateJWTToken(token)) {
+        if (token != null && this.tokenService.validateJWTToken(token) && this.tokenService.validateParameters(request, token)) {
             String username = this.tokenService.parseJWTToken(token).getSubject();
 
             UserDetails userDetails = this.ownerDetailsService.loadUserByUsername(username);

@@ -9,6 +9,7 @@ import com.mypetserver.mypetserver.repository.PetRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -137,18 +138,32 @@ public class PetManagerService {
     }
 
     public Boolean generateANewPetForOwner(String ownerName, String petName, String petType) {
-        Pet newPet = new Pet(
-                petName,
-                ownerName,
-                PetTypes.getPetTypeByName(petType),
-                50,
-                50,
-                300,
-                390,
-                "right",
-                PetActions.IDLE.getValue()
-                );
-        this.petRepository.save(newPet);
-        return true;
+        if (this.petRepository.getPetsByPetOwner(ownerName).size() >= 3) {
+            return false;
+        } else {
+            Pet newPet = new Pet(
+                    petName,
+                    ownerName,
+                    PetTypes.getPetTypeByName(petType),
+                    50,
+                    50,
+                    300,
+                    390,
+                    "right",
+                    PetActions.IDLE.getValue()
+            );
+            this.petRepository.save(newPet);
+            return true;
+        }
+    }
+
+    public Boolean abandonPet(String ownerName, int petId) {
+        Pet pet = this.petRepository.findByPetId(petId);
+        if (pet != null && pet.getPetOwner().equals(ownerName)) {
+            this.petRepository.removePetByPetId(petId);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

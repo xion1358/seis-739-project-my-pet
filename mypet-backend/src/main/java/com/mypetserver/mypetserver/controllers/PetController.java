@@ -107,4 +107,11 @@ public class PetController {
         String petType = request.getParameter("petType");
         return ResponseEntity.ok(this.petManagerService.generateANewPetForOwner(ownerName, petName, petType));
     }
+
+    @PostMapping("/abandon-pet")
+    public ResponseEntity<Boolean> abandonPet(HttpServletRequest request) {
+        String ownerName = request.getParameter("owner");
+        int petId = Integer.parseInt(request.getParameter("petId"));
+        return ResponseEntity.ok(this.petManagerService.abandonPet(ownerName, petId));
+    }
 }
