@@ -5,6 +5,7 @@ import { RegistrationComponent } from './registration/registration.component';
 import { MyPageComponent } from './my-page/my-page.component';
 import { SinglePetViewComponent } from './single-pet-view/single-pet-view.component';
 import { PetSelectionComponent } from './pet-selection/pet-selection.component';
+import { CatalogComponent } from './catalog/catalog.component';
 
 export const appRoutes: Routes = [
   { path: '', component: LandingPageComponent },
@@ -13,4 +14,5 @@ export const appRoutes: Routes = [
   { path: 'pet-selection', component: PetSelectionComponent},
   { path: 'mypage', component: MyPageComponent},
   { path: 'single-pet-view/:petId', component: SinglePetViewComponent},
+  { path: 'catalog', component: CatalogComponent},
 ];

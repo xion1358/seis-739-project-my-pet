@@ -21,14 +21,7 @@ export class MyPageComponent {
   ) {}
 
   ngOnInit() {
-    this._petService.queryForPets().subscribe({
-      next: (pets: Pet[]) => {
-        this.myPets = pets;
-      },
-      error: (e) => {
-        console.error("Error getting pets: ", e);
-      }
-    })
+    this.syncPets();
   }
 
   public viewPet(petId: number): void {
@@ -40,6 +33,30 @@ export class MyPageComponent {
   }
 
   public abandonPet(pet: Pet) {
-    console.log("Abandoned pet: ", pet.petId);
+    this._petService.abandonThisPet(pet.petId).subscribe({
+      next: (response) => {
+        if (response) {
+          this.syncPets();
+        } else {
+          alert("Sorry, couldn't abandon the pet at this time. Please try again later");
+        }
+      },
+      error: (error) => {
+        // console.error("Failed to abandon pet ", error);
+        alert("Sorry, couldn't abandon the pet at this time. Please try again later");
+      }
+    })
+  }
+
+  private syncPets(): void {
+    this._petService.queryForPets().subscribe({
+      next: (pets: Pet[]) => {
+        this.myPets = pets;
+        this.myPets.sort((pet1, pet2) => pet2.petId - pet1.petId);
+      },
+      error: (e) => {
+        console.error("Error getting pets: ", e);
+      }
+    })
   }
 }

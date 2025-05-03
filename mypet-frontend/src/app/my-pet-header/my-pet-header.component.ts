@@ -3,11 +3,12 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthenticationService } from '../services/authentication.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { MenuBarComponent } from "../menu-bar/menu-bar.component";
 
 @Component({
   selector: 'app-my-pet-header',
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, MenuBarComponent],
   templateUrl: './my-pet-header.component.html',
   styleUrl: './my-pet-header.component.css'
 })

@@ -24,7 +24,9 @@
     <input id="petName" type="text" [(ngModel)]="petName" placeholder="Fluffy" />
   </div>
 
-  <div class="confirm-button-wrapper">
+  <div class="button-group">
+    <button class="go-back-button" (click)="goBack()">Go Back</button>
     <button class="confirm-button" (click)="confirmSelection()">Confirm Selection</button>
   </div>
+  
 </div>

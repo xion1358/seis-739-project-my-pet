@@ -56,9 +56,30 @@
     font-size: 18px;
   }
 
-  .confirm-button-wrapper {
+  .pet-name-input-wrapper {
+    margin-top: 20px;
+  }
+
+  .button-group {
     margin-top: 30px;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .go-back-button {
+    padding: 12px 24px;
+    font-size: 18px;
+    background-color: #ccc;
+    color: black;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .go-back-button:hover {
+    background-color: #bbb;
   }
   
   .confirm-button {

@@ -142,12 +142,25 @@ export class PetService {
     this._http.post<boolean>(this._serverURL + "/request-a-pet", null, { headers, params })
     .subscribe({
         next: (response) => {
-            console.log('Pet Created');
-            this._router.navigate(['/mypage']);
+            if (response) {
+              console.log('Found a pet for you!');
+              this._router.navigate(['/mypage']);
+            } else {
+              alert("Sorry, you have too many pets! Please let a pet go before requesting another one!");
+            }
         },
         error: (err) => {
             console.error('Error trying to request a pet', err);
         }
     });
+  }
+
+  public abandonThisPet(petId: number): Observable<boolean> {
+    const headers = Utility.getTokenHeader();
+    const params = new HttpParams()
+      .set('owner', Utility.getUserName())
+      .set('petId', petId);
+  
+    return this._http.post<boolean>(this._serverURL + "/abandon-pet", null, { headers, params });
   }
 }

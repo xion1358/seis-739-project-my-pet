@@ -12,3 +12,4 @@
         <button [routerLink]="['/log-in']" class="header-button" (click)="logoff()">Log off</button>
     </ng-template>
 </div>
+<menu-bar *ngIf="loggedIn"/>
