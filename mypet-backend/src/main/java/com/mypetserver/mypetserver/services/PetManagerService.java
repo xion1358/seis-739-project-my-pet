@@ -9,7 +9,7 @@ import com.mypetserver.mypetserver.repository.PetRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,18 +51,23 @@ public class PetManagerService {
         logger.info("Starting Pet Loop");
         Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() -> {
             for (Pet pet : pets.values()) {
-                int updateCycleCount = movementCounters.getOrDefault(pet.getPetId(), 0) + 1;
+                int petIsShared = pet.getShared();
 
+                String topicLocation = (petIsShared > 0) ? "/topic/shared/pet/" : "/topic/pet/";
+
+                int updateCycleCount = movementCounters.getOrDefault(pet.getPetId(), 0) + 1;
                 this.petFoodService.getAllPetsFoods().computeIfAbsent(pet.getPetId(), id -> foodRepository.findFoodByPetId(id));
 
-                this.updatePet(pet, updateCycleCount);
+
+                PetData updatedData = this.updatePet(pet, updateCycleCount);
+                this.sendPetData(updatedData, topicLocation);
 
                 movementCounters.put(pet.getPetId(), updateCycleCount);
             }
         }, 0, 1, TimeUnit.SECONDS);
     }
 
-    private void updatePet(Pet pet, int updateCycleCount) {
+    private PetData updatePet(Pet pet, int updateCycleCount) {
         if (updateCycleCount % 2 == 0) {
             if (pet.getPetHungerLevel() > 0){
                 pet.setPetHungerLevel(pet.getPetHungerLevel() - 1);
@@ -72,26 +77,32 @@ public class PetManagerService {
             }
         }
 
-        PetData updatedPetData = this.petBehaviorService.updatePetBehavior(pet);
-        this.sendPetData(updatedPetData);
+        return this.petBehaviorService.updatePetBehavior(pet);
     }
 
     // Final action to send pet data
-    private void sendPetData(PetData updatedPetData) {
+    private void sendPetData(PetData updatedPetData, String topicLocation) {
         Map<String, Object> petData = new HashMap<>();
         petData.put("pet", updatedPetData.getPet());
         petData.put("food", updatedPetData.getFood());
         petData.put("action", updatedPetData.getPetBehavior());
         petData.put("actionTime", updatedPetData.getActionTime());
-        messagingTemplate.convertAndSend("/topic/pet/" + updatedPetData.getPet().getPetId(), petData);
+        messagingTemplate.convertAndSend(topicLocation + updatedPetData.getPet().getPetId(), petData);
     }
 
     // Actions to add/remove pet from update cycle
-    public Pet registerPet(int petId) {
-        if (!pets.containsKey(petId)) {
-            pets.put(petId, petRepository.findByPetId(petId));
+    public Pet registerPet(String ownerName, int petId) {
+        Pet pet = petRepository.findByPetId(petId);
+
+        if (ownerName != null && !ownerName.isEmpty() && pet != null) {
+            if (!pet.getPetOwner().equals(ownerName) && pet.getShared() < 1) {
+                return null;
+            } else if (!pets.containsKey(petId)) {
+                pets.put(petId, petRepository.findByPetId(petId));
+            }
+            return pet;
         }
-        return pets.get(petId);
+        return null;
     }
 
     public void unregisterPet(int petId) {
@@ -100,6 +111,11 @@ public class PetManagerService {
 
     public ArrayList<Pet> getPets(String ownerName) {
         return new ArrayList<>(petRepository.getPetsByPetOwner(ownerName));
+    }
+
+    public ArrayList<Pet> getSharedPets(int cursor) {
+        logger.info("pets: {}", petRepository.findNextSharedPets(cursor, 5));
+        return new ArrayList<>(petRepository.findNextSharedPets(cursor, 5));
     }
 
     public synchronized void addSubscriber(int petId, String sessionId) {
@@ -124,10 +140,7 @@ public class PetManagerService {
                     logger.info("Pet {} has been removed from loop because no live sessions", petId);
                     petRepository.save(petRepository.findByPetId(petId));
                     iterator.remove();
-                    movementCounters.remove(petId);
-                    this.petFoodService.getAllPetsFoods().remove(petId);
-                    this.petBehaviorService.getAllPetActions().remove(petId);
-                    unregisterPet(petId);
+                    this.cleanPetFromLoop(petId);
                 }
             }
         }
@@ -150,7 +163,8 @@ public class PetManagerService {
                     300,
                     390,
                     "right",
-                    PetActions.IDLE.getValue()
+                    PetActions.IDLE.getValue(),
+                    0
             );
             this.petRepository.save(newPet);
             return true;
@@ -159,11 +173,41 @@ public class PetManagerService {
 
     public Boolean abandonPet(String ownerName, int petId) {
         Pet pet = this.petRepository.findByPetId(petId);
-        if (pet != null && pet.getPetOwner().equals(ownerName)) {
+        if (pet != null && pet.getPetOwner().equals(ownerName) && pet.getShared() < 1) {
             this.petRepository.removePetByPetId(petId);
             return true;
         } else {
             return false;
         }
+    }
+
+    public Boolean sharePet(String ownerName, int petId) {
+        Pet pet = this.petRepository.findByPetId(petId);
+        if (pet != null && pet.getPetOwner().equals(ownerName)) {
+            pet.setShared(1);
+            this.petRepository.save(pet);
+            return true;
+        }
+        return false;
+    }
+
+    public Boolean unsharePet(String ownerName, int petId) {
+        Pet pet = this.petRepository.findByPetId(petId);
+        if (pet != null && pet.getPetOwner().equals(ownerName)) {
+            pet.setShared(0);
+            this.petRepository.save(pet);
+            this.cleanPetFromLoop(petId);
+
+            messagingTemplate.convertAndSend("/topic/shared/pet/" + petId, "CLOSE");
+            return true;
+        }
+        return false;
+    }
+
+    private void cleanPetFromLoop(int petId) {
+        movementCounters.remove(petId);
+        this.petFoodService.getAllPetsFoods().remove(petId);
+        this.petBehaviorService.getAllPetActions().remove(petId);
+        unregisterPet(petId);
     }
 }

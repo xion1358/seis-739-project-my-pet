@@ -23,6 +23,13 @@ public interface PetRepository extends JpaRepository<Pet, Integer> {
     @Query("SELECT p FROM Pet p WHERE p.petId = :petId")
     Pet findByPetIdForUpdate(@Param("petId") int petId);
 
+    @Lock(LockModeType.PESSIMISTIC_READ)
+    @Query("SELECT p FROM Pet p WHERE p.petId = :petId")
+    Pet findByPetIdReadLock(@Param("petId") int petId);
+
+    @Query(value = "SELECT * FROM pets WHERE petid > :cursor AND shared = 1 ORDER BY petid LIMIT :limit", nativeQuery = true)
+    List<Pet> findNextSharedPets(@Param("cursor") int cursor, @Param("limit") int limit);
+
     @Modifying
     @Transactional
     @Query("UPDATE Pet p SET p.petAffectionLevel = CASE WHEN p.petAffectionLevel <= 90 THEN p.petAffectionLevel + 10 ELSE 100 END WHERE p.petId = :petId")

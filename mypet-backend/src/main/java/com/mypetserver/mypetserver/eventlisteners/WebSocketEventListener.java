@@ -34,11 +34,24 @@ public class WebSocketEventListener {
         String destination = headerAccessor.getDestination();
 
         //logger.info("WebSocket session subscribe event. Session ID: {}", sessionId);
-        if (destination != null && destination.startsWith("/topic/pet/")) {
-            try {
-                int petId = Integer.parseInt(destination.replace("/topic/pet/", ""));
-                petManagerService.addSubscriber(petId, sessionId);
-            } catch (NumberFormatException ignored) {}
+        if (destination != null) {
+            String topicLocation = null;
+
+            if (destination.startsWith("/topic/pet/")) {
+                topicLocation = "/topic/pet/";
+            } else if (destination.startsWith("/topic/shared/pet/")) {
+                topicLocation = "/topic/shared/pet/";
+            }
+
+            if (topicLocation != null) {
+                try {
+                    int petId = Integer.parseInt(destination.replace(topicLocation, ""));
+                    petManagerService.addSubscriber(petId, sessionId);
+                } catch (NumberFormatException ignored) {
+                    logger.error("Could not parse pet id from destination: {}", destination);
+                }
+            }
         }
+
     }
 }

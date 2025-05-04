@@ -79,8 +79,12 @@ public class PetController {
 
     @PostMapping("/register-pet-for-viewing")
     public ResponseEntity<Pet> registerPetForViewing(HttpServletRequest request) {
-        Pet registeredPet = this.petManagerService.registerPet(Integer.parseInt(request.getParameter("id")));
-        return ResponseEntity.ok(registeredPet);
+        String ownerName = request.getParameter("owner");
+        Pet registeredPet = this.petManagerService.registerPet(ownerName, Integer.parseInt(request.getParameter("id")));
+
+        logger.info("Registering pet {} for {}", registeredPet.getPetId(), ownerName);
+
+        return (registeredPet != null) ? ResponseEntity.ok(registeredPet) : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @PostMapping("/create-pet-food")
@@ -113,5 +117,26 @@ public class PetController {
         String ownerName = request.getParameter("owner");
         int petId = Integer.parseInt(request.getParameter("petId"));
         return ResponseEntity.ok(this.petManagerService.abandonPet(ownerName, petId));
+    }
+
+    @GetMapping("/get-shared-pets")
+    public ResponseEntity<List<Pet>> getSharedPets(HttpServletRequest request) {
+        int cursor = Integer.parseInt(request.getParameter("cursor"));
+        ArrayList<Pet> pets = this.petManagerService.getSharedPets(cursor);
+        return ResponseEntity.ok(pets);
+    }
+
+    @PostMapping("/share-pet")
+    public ResponseEntity<Boolean> sharePet(HttpServletRequest request) {
+        String ownerName = request.getParameter("owner");
+        int petId = Integer.parseInt(request.getParameter("petId"));
+        return ResponseEntity.ok(this.petManagerService.sharePet(ownerName, petId));
+    }
+
+    @PostMapping("/unshare-pet")
+    public ResponseEntity<Boolean> unsharePet(HttpServletRequest request) {
+        String ownerName = request.getParameter("owner");
+        int petId = Integer.parseInt(request.getParameter("petId"));
+        return ResponseEntity.ok(this.petManagerService.unsharePet(ownerName, petId));
     }
 }

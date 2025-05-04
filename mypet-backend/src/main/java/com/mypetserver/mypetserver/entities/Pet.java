@@ -45,9 +45,12 @@ public class Pet {
     @Column(name = "petaction")
     private String petAction;
 
+    @Column(name = "shared")
+    private int shared;
+
     public Pet(String petName, String petOwner, PetTypes petType,
                int petAffectionLevel, int petHunger, int x, int y, String direction,
-               String petAction) {
+               String petAction, int shared) {
         this.petName = petName;
         this.petOwner = petOwner;
         this.petType = petType;
@@ -57,6 +60,7 @@ public class Pet {
         this.petYLocation = y;
         this.petDirection = direction;
         this.petAction = petAction;
+        this.shared = shared;
     }
 
     public Pet() {
