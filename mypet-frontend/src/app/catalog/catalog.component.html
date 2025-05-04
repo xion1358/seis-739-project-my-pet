@@ -1,1 +1,27 @@
-<p>catalog works!</p>
+<div class="pet-list-container">
+    <h2>My Pets</h2>
+    
+    <div *ngIf="!sharedPets || sharedPets.length === 0" class="no-pets">
+      <p>No pets found for the current user.</p>
+    </div>
+  
+    <div class="pet-list">
+      <div *ngFor="let pet of sharedPets"
+           class="pet-card"
+           [class.selected]="selectedPet && selectedPet.petId === pet.petId"
+           (click)="selectPet(pet)">
+        <h3>{{ pet.petName }}</h3>
+        <img src="../../assets/sprites/pets/{{pet.petType.name.toLowerCase()}}-open-eyes-sprite.png"/>
+  
+        <div class="pet-info">
+          <p><strong>Affection Level:</strong> {{ pet.petAffectionLevel }}</p>
+          <p><strong>Hunger Level:</strong> {{ pet.petHungerLevel }}</p>
+        </div>
+      </div>
+    </div>
+  
+    <div class="selected-pet-actions" *ngIf="selectedPet">
+      <button class="btn view-btn" (click)="viewPet(selectedPet.petId, selectedPet.shared)">View Pet</button>
+    </div>
+  </div>
+  

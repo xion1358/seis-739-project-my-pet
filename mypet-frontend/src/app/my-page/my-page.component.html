@@ -16,13 +16,16 @@
       <div class="pet-info">
         <p><strong>Affection Level:</strong> {{ pet.petAffectionLevel }}</p>
         <p><strong>Hunger Level:</strong> {{ pet.petHungerLevel }}</p>
+        <p><strong>Shared:</strong> {{ pet.shared > 0 ? "shared" : "not shared" }}</p>
       </div>
     </div>
   </div>
 
   <div class="selected-pet-actions" *ngIf="selectedPet">
+    <button name="share-btn" class="btn share-btn" *ngIf="selectedPet.shared < 1" (click)="sharePet(selectedPet)">Share Pet</button>
+    <button name="unshare-btn" class="btn unshare-btn" *ngIf="selectedPet.shared > 0" (click)="unsharePet(selectedPet)">Unshare Pet</button>
     <button class="btn abandon-btn" (click)="abandonPet(selectedPet)">Abandon Pet</button>
-    <button class="btn view-btn" (click)="viewPet(selectedPet.petId)">View Pet</button>
+    <button class="btn view-btn" (click)="viewPet(selectedPet.petId, selectedPet.shared)">View Pet</button>
   </div>
 
   <div class="select-new-pet-container">

@@ -78,12 +78,14 @@ export class PhaserGame implements OnInit, OnDestroy {
     viewPet() {
         this._route.paramMap.subscribe(paramMap => {
             const petIdParam = paramMap.get('petId');
+            const sharedParam = paramMap.get('shared');
             const petIdFromParam = petIdParam ? +petIdParam : null;
+            const sharedFromParam = sharedParam ? +sharedParam : 0;
 
             if (petIdFromParam) {
                 this._petService.registerPetForViewing(petIdFromParam).subscribe({
                     next: () => {
-                        this._petService.connect(petIdFromParam);
+                        this._petService.connect(petIdFromParam, sharedFromParam);
                     },
                     error: () => {
                         alert("Error registering pet. Please try again.");

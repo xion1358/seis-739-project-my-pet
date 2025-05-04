@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { PetService } from '../services/pet.service';
 import { Pet } from '../models/pet';
 import { CommonModule } from '@angular/common';
@@ -13,7 +13,7 @@ import { Router, RouterModule } from '@angular/router';
 })
 export class MyPageComponent {
   public myPets: Pet[];
-  public selectedPet: Pet;
+  public selectedPet: Pet | null = null;
 
   constructor(
     private _petService: PetService,
@@ -24,12 +24,38 @@ export class MyPageComponent {
     this.syncPets();
   }
 
-  public viewPet(petId: number): void {
-    this._router.navigate(["/single-pet-view", petId]);
+  public viewPet(petId: number, shared: number): void {
+    this._router.navigate(["/single-pet-view", petId, shared]);
   }
 
   public selectPet(pet: Pet) {
     this.selectedPet = pet;
+  }
+
+  public sharePet(pet: Pet) {
+    this._petService.shareThisPet(pet.petId).subscribe({
+      next: () => {
+        this.syncPets();
+        console.log("Shared your pet {}", pet.petId);
+      },
+      error: (error) => {
+        // console.error("Failed to abandon pet ", error);
+        alert("Sorry, couldn't share the pet at this time. Please try again later");
+      }
+    })
+  }
+
+  public unsharePet(pet: Pet) {
+    this._petService.unshareThisPet(pet.petId).subscribe({
+      next: () => {
+        this.syncPets();
+        console.log("Unshared your pet {}", pet.petId);
+      },
+      error: (error) => {
+        // console.error("Failed to abandon pet ", error);
+        alert("Sorry, couldn't unshare the pet at this time. Please try again later");
+      }
+    })
   }
 
   public abandonPet(pet: Pet) {
@@ -37,8 +63,9 @@ export class MyPageComponent {
       next: (response) => {
         if (response) {
           this.syncPets();
+          this.selectedPet = null;
         } else {
-          alert("Sorry, couldn't abandon the pet at this time. Please try again later");
+          alert("Sorry, couldn't abandon the pet at this time. Please check if your pet is still shared and try again.");
         }
       },
       error: (error) => {
@@ -53,6 +80,11 @@ export class MyPageComponent {
       next: (pets: Pet[]) => {
         this.myPets = pets;
         this.myPets.sort((pet1, pet2) => pet2.petId - pet1.petId);
+        const current = this.selectedPet;
+        if (current != null) {
+          this.selectedPet = this.myPets.find(pet => pet.petId === current.petId) || null;
+        }
+        
       },
       error: (e) => {
         console.error("Error getting pets: ", e);

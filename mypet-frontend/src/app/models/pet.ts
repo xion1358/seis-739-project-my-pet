@@ -11,4 +11,5 @@ export interface Pet {
     petYLocation: number;
     petDirection: string;
     petAction: string;
+    shared: number;
   }

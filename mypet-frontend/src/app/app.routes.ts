@@ -13,6 +13,6 @@ export const appRoutes: Routes = [
   { path: 'registration', component: RegistrationComponent},
   { path: 'pet-selection', component: PetSelectionComponent},
   { path: 'mypage', component: MyPageComponent},
-  { path: 'single-pet-view/:petId', component: SinglePetViewComponent},
+  { path: 'single-pet-view/:petId/:shared', component: SinglePetViewComponent},
   { path: 'catalog', component: CatalogComponent},
 ];

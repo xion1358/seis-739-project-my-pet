@@ -44,13 +44,15 @@ export class PetService {
 
   public registerPetForViewing(petId: number): Observable<Pet> {
     const headers = Utility.getTokenHeader();
-    const params = new HttpParams().set('id', petId);
+    const params = new HttpParams()
+      .set('owner', Utility.getUserName())
+      .set('id', petId);
   
     return this._http.post<Pet>(this._serverURL + "/register-pet-for-viewing", null, { headers, params });
   }
   
 
-  public connect(petId: number): void {
+  public connect(petId: number, shared: number): void {
     try {
       const token = localStorage.getItem('token');
 
@@ -63,7 +65,7 @@ export class PetService {
         onConnect: () =>
         {
           //console.log("Connected to WebSocket");
-          this.subscribeToPet(petId);
+          this.subscribeToPet(petId, shared);
         },
         onStompError: (frame) => {
           console.error('STOMP Error:', frame);
@@ -77,11 +79,21 @@ export class PetService {
     }
   }
 
-  public subscribeToPet(petId: number): void {
-    this._stompClient.subscribe(`/topic/pet/${petId}`, (message: Message) => {
-      const petData = JSON.parse(message.body);
-      this._messageSubject.next(petData);
+  public subscribeToPet(petId: number, shared: number): void {
+    let topic = (shared > 0) ? `/topic/shared/pet/` : `/topic/pet/`;
+
+    this._stompClient.subscribe(`${topic}${petId}`, (message: Message) => {
+      if (message.body === 'CLOSE') {
+        this._stompClient.deactivate();
+        alert("This pet has been unshared. Navigating back to mypage");
+        this._router.navigate(['/mypage']);
+      } else {
+        const petData = JSON.parse(message.body);
+        this._messageSubject.next(petData);
+      }
+      
     });
+    
   }
 
   public unsubscribeFromViewingPet(): void {
@@ -162,5 +174,39 @@ export class PetService {
       .set('petId', petId);
   
     return this._http.post<boolean>(this._serverURL + "/abandon-pet", null, { headers, params });
+  }
+
+  public queryForSharedPets(cursor: number): Observable<Pet[]> {
+    try {
+      if (Utility.getTokenHeader() && Utility.getUserName()) {
+        const headers = Utility.getTokenHeader();
+        const params = new HttpParams().set('cursor', cursor);
+        console.log("Trying to get shared pets");
+
+        return this._http.get<Pet[]>(this._serverURL + "/get-shared-pets", {headers: headers, params: params});
+      }
+    } catch (error: any) {
+      console.error("Encountered error while trying to query pets: ", error.message);
+    }
+
+    return new Observable<Pet[]>();
+  }
+
+  public shareThisPet(petId: number): Observable<boolean> {
+    const headers = Utility.getTokenHeader();
+    const params = new HttpParams()
+      .set('owner', Utility.getUserName())
+      .set('petId', petId);
+  
+    return this._http.post<boolean>(this._serverURL + "/share-pet", null, { headers, params });
+  }
+
+  public unshareThisPet(petId: number): Observable<boolean> {
+    const headers = Utility.getTokenHeader();
+    const params = new HttpParams()
+      .set('owner', Utility.getUserName())
+      .set('petId', petId);
+  
+    return this._http.post<boolean>(this._serverURL + "/unshare-pet", null, { headers, params });
   }
 }
