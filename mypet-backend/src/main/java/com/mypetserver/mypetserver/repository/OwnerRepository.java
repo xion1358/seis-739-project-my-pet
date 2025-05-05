@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
  * This class defines the repository class used to interface with a database
  */
 public interface OwnerRepository extends JpaRepository<Owner, String> {
-    Owner getOwnerByUsername(@Param("username") String username);
+    Owner findOwnerByUsername(@Param("username") String username);
 
-    Owner getOwnerByEmail(@Param("email") String email);
+    Owner findOwnerByEmail(@Param("email") String email);
 }

@@ -24,7 +24,7 @@ public class OwnerDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Owner owner = ownerRepository.getOwnerByUsername(username);
+        Owner owner = ownerRepository.findOwnerByUsername(username);
         if (owner == null) {
             throw new UsernameNotFoundException("User not found");
         }

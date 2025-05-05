@@ -38,7 +38,7 @@ public class OwnerDetailsServiceTest {
 
     @Test
     void testLoadUserByUsernameSuccess() {
-        when(ownerRepository.getOwnerByUsername(username)).thenReturn(owner);
+        when(ownerRepository.findOwnerByUsername(username)).thenReturn(owner);
 
         this.userDetails = this.ownerDetailsService.loadUserByUsername(username);
         assertNotNull(userDetails);
@@ -46,7 +46,7 @@ public class OwnerDetailsServiceTest {
 
     @Test
     void testLoadUserByUsernameFailed() {
-        when(ownerRepository.getOwnerByUsername(username)).thenReturn(null);
+        when(ownerRepository.findOwnerByUsername(username)).thenReturn(null);
 
         assertThrows(UsernameNotFoundException.class, () -> this.ownerDetailsService.loadUserByUsername(username));
     }

@@ -42,8 +42,8 @@ public class RegistrationServiceTest {
                 "securePassword123"
         );
 
-        Mockito.when(ownerRepository.getOwnerByUsername("newUser")).thenReturn(null);
-        Mockito.when(ownerRepository.getOwnerByEmail("newuser@example.com")).thenReturn(null);
+        Mockito.when(ownerRepository.findOwnerByUsername("newUser")).thenReturn(null);
+        Mockito.when(ownerRepository.findOwnerByEmail("newuser@example.com")).thenReturn(null);
 
         Mockito.doNothing().when(ownerService).saveOwner(Mockito.any(Owner.class));
 
@@ -67,7 +67,7 @@ public class RegistrationServiceTest {
                 "password123"
         );
 
-        Mockito.when(ownerRepository.getOwnerByUsername("existingUser"))
+        Mockito.when(ownerRepository.findOwnerByUsername("existingUser"))
                 .thenReturn(new Owner());
 
         ResponseEntity<RegistrationResponse> response = registrationService.register(request);
@@ -87,7 +87,7 @@ public class RegistrationServiceTest {
                 "password123"
         );
 
-        Mockito.when(ownerRepository.getOwnerByEmail("newEmail@example.com"))
+        Mockito.when(ownerRepository.findOwnerByEmail("newEmail@example.com"))
                 .thenReturn(new Owner());
 
         ResponseEntity<RegistrationResponse> response = registrationService.register(request);

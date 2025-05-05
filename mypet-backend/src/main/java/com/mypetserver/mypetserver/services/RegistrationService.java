@@ -28,8 +28,8 @@ public class RegistrationService {
 
     public ResponseEntity<RegistrationResponse> register(RegistrationRequest registrationRequest) {
 
-        if (this.ownerRepository.getOwnerByUsername(registrationRequest.getUsername()) != null ||
-            this.ownerRepository.getOwnerByEmail(registrationRequest.getEmail()) != null) {
+        if (this.ownerRepository.findOwnerByUsername(registrationRequest.getUsername()) != null ||
+            this.ownerRepository.findOwnerByEmail(registrationRequest.getEmail()) != null) {
             return ResponseEntity
                     .status(HttpStatus.CONFLICT)
                     .body(new RegistrationResponse(

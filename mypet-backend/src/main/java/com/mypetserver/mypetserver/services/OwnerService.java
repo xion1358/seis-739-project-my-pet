@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * This class defines the service which manages interactions between the server and the owners repo
- * */
+ */
 @Service
 public class OwnerService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -23,9 +23,15 @@ public class OwnerService {
 
     public void saveOwner(Owner owner) {
         try {
+            Owner existingOwner = ownerRepository.findOwnerByUsername(owner.getUsername());
+            if (existingOwner != null) {
+                logger.error("Owner {} already exists!", existingOwner.getUsername());
+                throw new IllegalStateException("Owner with username '" + owner.getUsername() + "' already exists");
+            }
             ownerRepository.save(owner);
         } catch (Exception e) {
             logger.error("Could not save owner: {}", e.getMessage());
+            throw e;
         }
     }
 }
