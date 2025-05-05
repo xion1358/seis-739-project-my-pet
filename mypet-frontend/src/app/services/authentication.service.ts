@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { Utility } from '../Utilities/Utility';
@@ -27,7 +27,7 @@ export class AuthenticationService {
 
     const body = {username: data[0], password: data[1]};
 
-    this._http.post(this._serverURL + "/login", body) // use for other requests {headers: this._headers}
+    this._http.post(this._serverURL + "/login", body)
     .subscribe({
       next: (res: any) => {
         this.saveData(res);
@@ -35,8 +35,18 @@ export class AuthenticationService {
         this.loggedInStatus.next(true);
         this._router.navigate(['/mypage']);
       },
-      error: () => {
-        alert("Error logging in. Please try again.");
+      error: (error: HttpErrorResponse) => {
+        let errorMessage = "Error logging in. Please try again.";
+  
+        if (error.error && Array.isArray(error.error)) {
+          let validationErrorMessages = 'Invalid input: \n';
+          error.error.forEach((message: string) => {
+            validationErrorMessages += `${message}\n`;
+          });
+          errorMessage = validationErrorMessages;
+        }
+  
+        alert(errorMessage);
       }
     });
   }
@@ -49,17 +59,33 @@ export class AuthenticationService {
     const body = {username: data[0], displayName: data[1], email: data[2], password: data[3]};
 
     this._http.post(this._serverURL + "/registration", body)
-    .subscribe ({
-      next: (res: any) => {
-        this.saveData(res);
-        console.log("Registration Done");
-        this.loggedInStatus.next(true);
-        this._router.navigate(['/single-pet-view']);
-      },
-      error: () => {
-        alert("Error registering. Please try again.");
+  .subscribe({
+    next: (res: any) => {
+      this.saveData(res);
+      this.loggedInStatus.next(true);
+      this._router.navigate(['/mypage']);
+    },
+    error: (error: HttpErrorResponse) => {
+      let errorMessage = "Error registering. Please try again.";
+
+      if (error.error && Array.isArray(error.error)) {
+        let validationErrorMessages = 'Invalid input: \n';
+        error.error.forEach((message: string) => {
+          validationErrorMessages += `${message}\n`;
+        });
+        errorMessage = validationErrorMessages;
+      } else if (error.status === 400 && error.error && typeof error.error === 'object') {
+        errorMessage = `Error registering: ${error.error.message}`;
+      } else if (error.status === 500) {
+        errorMessage = "A server error occurred. Please try again later.";
+      } else if (error.status === 409 && error.error?.message) {
+        errorMessage = error.error.message;
       }
-    });
+
+      alert(errorMessage);
+    }
+  });
+
   }
 
   /**

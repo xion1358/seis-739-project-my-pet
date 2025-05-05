@@ -1,75 +1,80 @@
 /* Style for container */
 .login-container {
-    width: 100vw;
-    height: calc(100vh - 100px);
-    background-color: #CAE023;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
+  width: 100vw;
+  height: calc(100vh - 100px);
+  background-color: #CAE023;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 /* Style for form */
 .form-title {
-  text-align: center;
-  font-weight: bold;
+text-align: center;
+font-weight: bold;
 }
 
 
 .login-form {
-    width: 250px;
-    margin: 0 auto;
-    padding: 20px;
-    border: 1px solid #CCCCCC;
-    border-radius: 8px;
-    background-color: #FFFFFF;
-  }
-  
-  .form-entry {
-    margin-bottom: 15px;
-  }
-  
-  .form-entry label {
-    display: block;
-    margin-bottom: 5px;
-  }
-  
-  .form-entry input {
-    width: 100%;
-    padding: 10px 0 10px 0;
-    font-size: 14px;
-    border: 1px solid #CCCCCC;
-    border-radius: 4px;
-  }
-  
-  /* Styles for buttons */
-  .submit-button {
-    width: 100%;
-    padding: 10px;
-    background-color: black;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .submit-button:hover {
-    background-color: #444;
-  }
+  width: 250px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #CCCCCC;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+}
 
-  .go-back-button {
-    width: 100%;
-    margin-top: 10px;
-    padding: 10px;
-    background-color: white;
-    color: black;
-    border: 1px solid balck;
-    border-radius: 4px;
-    cursor: pointer;
-  }
+.form-entry {
+  margin-bottom: 15px;
+}
 
-  .go-back-button:hover {
-    background-color: #F0F0F0;
-    color: #333333;
-  }
-  
+.form-entry label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-entry input {
+  width: 100%;
+  padding: 10px 0 10px 0;
+  font-size: 14px;
+  border: 1px solid #CCCCCC;
+  border-radius: 4px;
+}
+
+/* Styles for buttons */
+.submit-button {
+  width: 100%;
+  padding: 10px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submit-button:hover {
+  background-color: #444;
+}
+
+.go-back-button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  background-color: white;
+  color: black;
+  border: 1px solid balck;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.go-back-button:hover {
+  background-color: #F0F0F0;
+  color: #333333;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.8em;
+  margin-top: 5px;
+}
