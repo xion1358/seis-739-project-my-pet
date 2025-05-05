@@ -61,13 +61,8 @@ public class TokenService {
 
     public String parseUsernameFromJWT(String token) {
         try {
-            Claims claims = Jwts.parser()
-                    .verifyWith(this.secretKey)
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload();
-            return claims.getSubject();
-
+            Claims claims = parseJWTToken(token);
+            return claims != null ? claims.getSubject() : null;
         } catch (Exception e) {
             logger.error("Failed to parse username: {}", e.getMessage());
             return null;

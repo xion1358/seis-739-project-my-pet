@@ -11,6 +11,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
+/**
+ * This class defines a service for login related actions. Defines the method to authenticate a given
+ * user request.
+ */
 @Service
 public class LoginService {
     private final AuthenticationManager authenticationManager;
