@@ -2,6 +2,9 @@ package com.mypetserver.mypetserver.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 import java.util.Objects;
@@ -12,7 +15,14 @@ import java.util.Objects;
  */
 @Getter
 public class LoginRequest {
+
+    @NotBlank(message = "Username was not received")
+    @Size(min = 1, max = 255, message = "Username length not met")
+    @Pattern(regexp = "^[a-zA-Z0-9_]+$", message = "Username must contain only alphanumeric characters and underscores")
     private final String username;
+
+    @NotBlank(message = "Password was not received")
+    @Size(min = 1, max = 255, message = "Password size not met")
     private final String password;
 
     @JsonCreator

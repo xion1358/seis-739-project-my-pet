@@ -10,4 +10,5 @@ import org.springframework.data.repository.query.Param;
 public interface OwnerRepository extends JpaRepository<Owner, String> {
     Owner getOwnerByUsername(@Param("username") String username);
 
+    Owner getOwnerByEmail(@Param("email") String email);
 }

@@ -5,6 +5,7 @@ import com.mypetserver.mypetserver.entities.Pet;
 import com.mypetserver.mypetserver.entities.PetTypes;
 import com.mypetserver.mypetserver.services.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class PetController {
 
     // Post requests
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         try {
             return this.loginService.login(loginRequest);
         } catch (Exception e) {
@@ -56,14 +57,18 @@ public class PetController {
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<RegistrationResponse> register(@RequestBody RegistrationRequest registrationRequest) {
+    public ResponseEntity<RegistrationResponse> register(@Valid @RequestBody RegistrationRequest registrationRequest) {
         try {
             return this.registrationService.register(registrationRequest);
+
         } catch (Exception e) {
-            logger.error("Error: could not register user {} - {}", registrationRequest.getUsername(),e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).build();
+            logger.error("Error: could not register user {} - {}", registrationRequest.getUsername(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(null);
         }
     }
+
 
     // Simply return ok as the filter will handle the validation when the request comes in
     @PostMapping("/validate")

@@ -95,7 +95,7 @@ class MyPetControllerTests {
 
         RegistrationRequest mockReq = new RegistrationRequest("testuser", "testdisplayname", "testemail@email.com", "password123");
 
-        RegistrationResponse mockRes = new RegistrationResponse("testuser", "token");
+        RegistrationResponse mockRes = new RegistrationResponse("testuser", "token", "Registered Successfully");
         ResponseEntity<RegistrationResponse> mockResEntity = ResponseEntity
                 .status(HttpStatus.OK)
                 .header(HttpHeaders.CONTENT_ENCODING, "UTF-8")
@@ -115,6 +115,50 @@ class MyPetControllerTests {
     }
 
     @Test
+    void testRegistrationFailedDueToMissingUsername() throws Exception {
+        String credentials = "{\"username\":\"\",\"displayName\":\"testdisplayname\", \"email\":\"testemail@email.com\", \"password\":\"password123\"}";
+
+        mockMvc.perform(post("/registration")
+                        .characterEncoding("UTF-8")
+                        .contentType("application/json")
+                        .content(credentials))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testRegistrationFailedDueToMissingEmail() throws Exception {
+        String credentials = "{\"username\":\"testuser\",\"displayName\":\"testdisplayname\", \"email\":\"\", \"password\":\"password123\"}";
+
+        mockMvc.perform(post("/registration")
+                        .characterEncoding("UTF-8")
+                        .contentType("application/json")
+                        .content(credentials))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testRegistrationFailedDueToMissingDisplayName() throws Exception {
+        String credentials = "{\"username\":\"testuser\",\"displayName\":\"\", \"email\":\"testemail@email.com\", \"password\":\"password123\"}";
+
+        mockMvc.perform(post("/registration")
+                        .characterEncoding("UTF-8")
+                        .contentType("application/json")
+                        .content(credentials))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testRegistrationFailedDueToMissingPassword() throws Exception {
+        String credentials = "{\"username\":\"testuser\",\"displayName\":\"testdisplayname\", \"email\":\"testemail@email.com\", \"password\":\"\"}";
+
+        mockMvc.perform(post("/registration")
+                        .characterEncoding("UTF-8")
+                        .contentType("application/json")
+                        .content(credentials))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void testValidateLoginSuccess() throws Exception {
         String token = "token";
         SecurityContextHolder.getContext().setAuthentication(
@@ -125,4 +169,25 @@ class MyPetControllerTests {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    void testLoginValidationFailsDueToPassword() throws Exception {
+        String credentials = "{\"username\":\"testuser\", \"password\":\"\"}";
+
+        mockMvc.perform(post("/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(credentials))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testLoginValidationFailsDueToUsername() throws Exception {
+        String credentials = "{\"username\":\"\", \"password\":\"Password123\"}";
+
+        mockMvc.perform(post("/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(credentials))
+                .andExpect(status().isBadRequest());
+    }
+
 }

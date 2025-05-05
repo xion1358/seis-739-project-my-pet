@@ -10,11 +10,15 @@ import java.util.Objects;
 public class RegistrationResponse {
     private final String username;
     private final String token;
+    private final String message;
 
     @JsonCreator
-    public RegistrationResponse(@JsonProperty("username") String username, @JsonProperty("token") String token) {
+    public RegistrationResponse(@JsonProperty("username") String username,
+                                @JsonProperty("token") String token,
+                                @JsonProperty("message") String message) {
         this.username = username;
         this.token = token;
+        this.message = message;
     }
 
     @Override
