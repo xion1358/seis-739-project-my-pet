@@ -35,7 +35,7 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = this.tokenService.getJWTToken(request);
-        logger.info("JWT Token: " + token);
+        // logger.info("JWT Token: " + token);
 
         if (token != null && this.tokenService.validateJWTToken(token) && this.tokenService.validateParameters(request, token)) {
             String username = this.tokenService.parseJWTToken(token).getSubject();

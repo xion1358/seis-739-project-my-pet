@@ -4,7 +4,9 @@ import com.mypetserver.mypetserver.dto.LoginRequest;
 import com.mypetserver.mypetserver.dto.LoginResponse;
 import com.mypetserver.mypetserver.dto.RegistrationRequest;
 import com.mypetserver.mypetserver.dto.RegistrationResponse;
+import com.mypetserver.mypetserver.entities.Pet;
 import com.mypetserver.mypetserver.services.LoginService;
+import com.mypetserver.mypetserver.services.PetManagerService;
 import com.mypetserver.mypetserver.services.RegistrationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,16 +23,21 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 class MyPetControllerTests {
+
+    @MockitoBean
+    private PetManagerService petManagerService;
 
     @MockitoBean
     private LoginService loginService;
@@ -160,7 +167,7 @@ class MyPetControllerTests {
 
     @Test
     void testValidateLoginSuccess() throws Exception {
-        String token = "token";
+        String token = "validToken";
         SecurityContextHolder.getContext().setAuthentication(
                 new UsernamePasswordAuthenticationToken("user", null, List.of(new SimpleGrantedAuthority("USER"))));
 
@@ -188,6 +195,66 @@ class MyPetControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(credentials))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testGetPets() throws Exception {
+        String token = "validToken";
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("user", null, List.of(new SimpleGrantedAuthority("USER"))));
+
+        ArrayList<Pet> mockedPets = new ArrayList<>();
+        mockedPets.add(new Pet());
+        mockedPets.add(new Pet());
+        when(petManagerService.getPets("testowner")).thenReturn(mockedPets);
+
+        mockMvc.perform(get("/get-pets")
+                        .header("Authorization", "Bearer " + token)
+                        .param("owner", "testowner")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2));
+    }
+
+
+    @Test
+    void testRegisterPetForViewingSuccess() throws Exception {
+        String ownerName = "testowner";
+        int petId = 1;
+        String token = "validToken";
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("user", null, List.of(new SimpleGrantedAuthority("USER"))));
+
+        Pet mockedPet = new Pet();
+        mockedPet.setPetId(petId);
+        when(petManagerService.registerPet(ownerName, petId)).thenReturn(mockedPet);
+
+        mockMvc.perform(post("/register-pet-for-viewing")
+                        .header("Authorization", "Bearer " + token)
+                        .param("owner", ownerName)
+                        .param("id", String.valueOf(petId))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.petId").value(petId));
+    }
+
+
+    @Test
+    void testRegisterPetForViewingFailed() throws Exception {
+        String ownerName = "testowner";
+        int petId = 1;
+        String token = "validToken";
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("user", null, List.of(new SimpleGrantedAuthority("USER"))));
+
+        when(petManagerService.registerPet(ownerName, petId)).thenReturn(null);
+
+        mockMvc.perform(post("/register-pet-for-viewing")
+                        .header("Authorization", "Bearer " + token)
+                        .param("owner", ownerName)
+                        .param("id", String.valueOf(petId))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
     }
 
 }

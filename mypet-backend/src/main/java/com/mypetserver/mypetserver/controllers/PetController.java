@@ -87,7 +87,7 @@ public class PetController {
         String ownerName = request.getParameter("owner");
         Pet registeredPet = this.petManagerService.registerPet(ownerName, Integer.parseInt(request.getParameter("id")));
 
-        logger.info("Registering pet {} for {}", registeredPet.getPetId(), ownerName);
+        // logger.info("Registering pet {} for {}", registeredPet.getPetId(), ownerName);
 
         return (registeredPet != null) ? ResponseEntity.ok(registeredPet) : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
