@@ -176,12 +176,11 @@ export class PetService {
     return this._http.post<boolean>(this._serverURL + "/abandon-pet", null, { headers, params });
   }
 
-  public queryForSharedPets(cursor: number): Observable<Pet[]> {
+  public queryForSharedPets(cursor: number, pageDirection: string): Observable<Pet[]> {
     try {
       if (Utility.getTokenHeader() && Utility.getUserName()) {
         const headers = Utility.getTokenHeader();
-        const params = new HttpParams().set('cursor', cursor);
-        console.log("Trying to get shared pets");
+        const params = new HttpParams().set('cursor', cursor).set('direction', pageDirection);
 
         return this._http.get<Pet[]>(this._serverURL + "/get-shared-pets", {headers: headers, params: params});
       }

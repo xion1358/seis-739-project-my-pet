@@ -12,9 +12,10 @@ import { PetService } from '../services/pet.service';
   styleUrl: './catalog.component.css'
 })
 export class CatalogComponent {
-  public sharedPets: Pet[];
+  public sharedPets: Pet[] = [];
   public selectedPet: Pet;
-  public page = 1;
+  public hasPrevious = false;
+  public hasNext = true;
   
     constructor(
       private _petService: PetService,
@@ -22,7 +23,7 @@ export class CatalogComponent {
     ) {}
   
     ngOnInit() {
-      this.getSharedPets();
+      this.getPage('next');
     }
   
     public viewPet(petId: number, shared: number): void {
@@ -32,25 +33,47 @@ export class CatalogComponent {
     public selectPet(pet: Pet) {
       this.selectedPet = pet;
     }
-  
-    private getSharedPets(): void {
-      this._petService.queryForSharedPets(this.getCursor(this.sharedPets)).subscribe({
-        next: (pets: Pet[]) => {
-          this.sharedPets = pets;
-          this.sharedPets.sort((pet1, pet2) => pet2.petId - pet1.petId);
+
+    public getNextPage(){
+      this.getPage('next');
+    }
+
+    public getPreviousPage() {
+      this.getPage('previous');
+    }
+
+    private getPage(pageDirection: string) {
+      this._petService.queryForSharedPets(this.getCursor(pageDirection), pageDirection).subscribe({
+        next: (response: any) => {
+          if (response.pets.length >= 1) {
+            this.sharedPets = response.pets;
+            this.hasNext = response.hasNext;
+            this.hasPrevious = response.hasPrevious;
+            this.sharedPets.sort((pet1, pet2) => pet1.petId - pet2.petId);
+          } else {
+            if (pageDirection === "next") {
+              this.hasNext = false;
+            } else {
+              this.hasPrevious = false;
+            }
+            alert("You've reached the end or beginning of the catalog! You may want to refresh your page.");
+          }
         },
         error: (e) => {
           console.error("Error getting pets: ", e);
         }
-      })
+      });
     }
 
-    public getCursor(pets: Pet[]): number {
-      if (pets != null && pets.length > 0) {
-        return Math.max(...pets.map(pet => pet.petId));
-      } else {
+    private getCursor(pageDirection: string): number {
+      if (this.sharedPets === null || this.sharedPets.length < 1) {
         return 0;
+      } else {
+        if (pageDirection === "next") {
+          return Math.max(...this.sharedPets.map(pet => pet.petId));
+        }else {
+          return Math.min(...this.sharedPets.map(pet => pet.petId));
+        }
       }
-      
     };
 }

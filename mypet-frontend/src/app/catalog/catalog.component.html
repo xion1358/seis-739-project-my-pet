@@ -2,7 +2,7 @@
     <h2>My Pets</h2>
     
     <div *ngIf="!sharedPets || sharedPets.length === 0" class="no-pets">
-      <p>No pets found for the current user.</p>
+      <p>No shared pets found!</p>
     </div>
   
     <div class="pet-list">
@@ -16,12 +16,18 @@
         <div class="pet-info">
           <p><strong>Affection Level:</strong> {{ pet.petAffectionLevel }}</p>
           <p><strong>Hunger Level:</strong> {{ pet.petHungerLevel }}</p>
+          <p><strong>Owner:</strong> {{ pet.petOwner }}</p>
         </div>
       </div>
     </div>
   
     <div class="selected-pet-actions" *ngIf="selectedPet">
       <button class="btn view-btn" (click)="viewPet(selectedPet.petId, selectedPet.shared)">View Pet</button>
+    </div>
+
+    <div class="page-buttons">
+      <button class="btn previous-btn" (click)="getPreviousPage()" *ngIf="this.hasPrevious">Previous Page</button>
+      <button class="btn next-btn" (click)="getNextPage()" *ngIf="this.hasNext">Next Page</button>
     </div>
   </div>
   
