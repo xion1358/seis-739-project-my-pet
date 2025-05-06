@@ -24,7 +24,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -256,5 +258,78 @@ class MyPetControllerTests {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
+
+    @Test
+    void testGetSharedPets() throws Exception {
+        int cursor = 10;
+        String direction = "next";
+        String token = "validToken";
+
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("user", null, List.of(new SimpleGrantedAuthority("USER"))));
+
+        Map<String, Object> mockResult = new HashMap<>();
+        List<Pet> mockPets = List.of(new Pet(), new Pet());
+        mockResult.put("pets", mockPets);
+        mockResult.put("hasPrevious", true);
+        mockResult.put("hasNext", false);
+
+        when(petManagerService.getSharedPets(cursor, direction)).thenReturn(mockResult);
+
+        mockMvc.perform(get("/get-shared-pets")
+                        .header("Authorization", "Bearer " + token)
+                        .param("cursor", String.valueOf(cursor))
+                        .param("direction", direction)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.pets.length()").value(2))
+                .andExpect(jsonPath("$.hasPrevious").value(true))
+                .andExpect(jsonPath("$.hasNext").value(false));
+    }
+
+    @Test
+    void testGetSharedPetsMissingCursor() throws Exception {
+        String token = "validToken";
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("user", null, List.of(new SimpleGrantedAuthority("USER"))));
+
+        mockMvc.perform(get("/get-shared-pets")
+                        .header("Authorization", "Bearer " + token)
+                        .param("direction", "next")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("Missing 'cursor' or 'direction' parameter"));
+    }
+
+    @Test
+    void testGetSharedPetsInvalidCursor() throws Exception {
+        String token = "validToken";
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("user", null, List.of(new SimpleGrantedAuthority("USER"))));
+
+        mockMvc.perform(get("/get-shared-pets")
+                        .header("Authorization", "Bearer " + token)
+                        .param("cursor", "notAnInteger")
+                        .param("direction", "next")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("'cursor' must be an integer"));
+    }
+
+    @Test
+    void testGetSharedPetsInvalidDirection() throws Exception {
+        String token = "validToken";
+        SecurityContextHolder.getContext().setAuthentication(
+                new UsernamePasswordAuthenticationToken("user", null, List.of(new SimpleGrantedAuthority("USER"))));
+
+        mockMvc.perform(get("/get-shared-pets")
+                        .header("Authorization", "Bearer " + token)
+                        .param("cursor", "10")
+                        .param("direction", "upward")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("'direction' must be 'next' or 'previous'"));
+    }
+
 
 }

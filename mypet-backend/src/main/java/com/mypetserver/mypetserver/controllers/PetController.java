@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This Class defines RESTful APIs for requests to the server
@@ -125,10 +126,27 @@ public class PetController {
     }
 
     @GetMapping("/get-shared-pets")
-    public ResponseEntity<List<Pet>> getSharedPets(HttpServletRequest request) {
-        int cursor = Integer.parseInt(request.getParameter("cursor"));
-        ArrayList<Pet> pets = this.petManagerService.getSharedPets(cursor);
-        return ResponseEntity.ok(pets);
+    public ResponseEntity<Map<String, Object>> getSharedPets(HttpServletRequest request) {
+        String cursorParam = request.getParameter("cursor");
+        String direction = request.getParameter("direction");
+
+        if (cursorParam == null || direction == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Missing 'cursor' or 'direction' parameter"));
+        }
+
+        if (!direction.equals("next") && !direction.equals("previous")) {
+            return ResponseEntity.badRequest().body(Map.of("error", "'direction' must be 'next' or 'previous'"));
+        }
+
+        int cursor;
+        try {
+            cursor = Integer.parseInt(cursorParam);
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "'cursor' must be an integer"));
+        }
+
+        Map<String, Object> petsAndCursorStatus = this.petManagerService.getSharedPets(cursor, direction);
+        return ResponseEntity.ok(petsAndCursorStatus);
     }
 
     @PostMapping("/share-pet")

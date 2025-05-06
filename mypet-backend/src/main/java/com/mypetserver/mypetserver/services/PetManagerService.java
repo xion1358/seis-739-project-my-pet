@@ -113,10 +113,45 @@ public class PetManagerService {
         return new ArrayList<>(petRepository.getPetsByPetOwner(ownerName));
     }
 
-    public ArrayList<Pet> getSharedPets(int cursor) {
-        logger.info("pets: {}", petRepository.findNextSharedPets(cursor, 5));
-        return new ArrayList<>(petRepository.findNextSharedPets(cursor, 5));
+    public Map<String, Object> getSharedPets(int cursor, String direction) {
+        Map<String, Object> result = new HashMap<>();
+        List<Pet> pets = new ArrayList<>();
+
+        if (direction.equals("next")) {
+            pets = new ArrayList<>(petRepository.findNextSharedPets(cursor, 5));
+        } else {
+            pets = new ArrayList<>(petRepository.findPreviousSharedPets(cursor, 5));
+        }
+
+        // Special case if user is in an unknown state, return nothing
+        if (pets.isEmpty()) {
+            result.put("pets", pets);
+            result.put("hasNext", false);
+            result.put("hasPrevious", false);
+            return result;
+        }
+
+        int lowestPetId = Integer.MAX_VALUE;
+        for (Pet pet : pets) {
+            if (pet.getPetId() < lowestPetId) {
+                lowestPetId = pet.getPetId();
+            }
+        }
+
+        int highestPetId = -1;
+        for (Pet pet : pets) {
+            if (pet.getPetId() > highestPetId) {
+                highestPetId = pet.getPetId();
+            }
+        }
+
+        result.put("pets", pets);
+        result.put("hasPrevious", !pets.isEmpty() && !petRepository.findPreviousSharedPets(lowestPetId, 5).isEmpty());
+        result.put("hasNext", !petRepository.findNextSharedPets(highestPetId, 5).isEmpty());
+
+        return result;
     }
+
 
     public synchronized void addSubscriber(int petId, String sessionId) {
         petSubscribers.computeIfAbsent(petId, k -> ConcurrentHashMap.newKeySet()).add(sessionId);

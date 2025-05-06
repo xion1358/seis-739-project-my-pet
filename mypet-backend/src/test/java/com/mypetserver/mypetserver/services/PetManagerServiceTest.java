@@ -220,4 +220,192 @@ class PetManagerServiceTest {
 
         verify(petRepository).save(any());
     }
+
+    @Test
+    void testGetSharedPetsWhenGoingToNextAndHavingNext() {
+        Pet pet1 = createTestPet("bob", 101);
+        Pet pet2 = createTestPet("bob", 102);
+        Pet pet3 = createTestPet("carol", 103);
+        Pet pet4 = createTestPet("carol", 104);
+        Pet pet5 = createTestPet("carol", 105);
+        Pet pet6 = createTestPet("carol", 106);
+        Pet pet7 = createTestPet("carol", 107);
+        Pet pet8 = createTestPet("carol", 108);
+
+        List<Pet> mockSharedPetsNext = List.of(pet3, pet4, pet5, pet6, pet7);
+
+        List<Pet> mockSharedPetsNextAfter = List.of(pet8);
+        List<Pet> mockSharedPetsPreviousAfter = List.of(pet1, pet2);
+
+        when(petRepository.findNextSharedPets(102, 5)).thenReturn(mockSharedPetsNext);
+
+        when(petRepository.findNextSharedPets(107, 5)).thenReturn(mockSharedPetsNextAfter);
+        when(petRepository.findPreviousSharedPets(103, 5)).thenReturn(mockSharedPetsPreviousAfter);
+
+        Map<String, Object> result = petManagerService.getSharedPets(102, "next");
+
+        assertTrue(result.containsKey("pets"));
+        assertTrue(result.containsKey("hasPrevious"));
+        assertTrue(result.containsKey("hasNext"));
+
+        @SuppressWarnings("unchecked")
+        List<Pet> resultPets = (List<Pet>) result.get("pets");
+
+        assertEquals(5, resultPets.size());
+        assertTrue((Boolean) result.get("hasNext"));
+        assertTrue((Boolean) result.get("hasPrevious"));
+    }
+
+    @Test
+    void testGetSharedPetsWhenGoingToNextAndNotHavingNext() {
+        Pet pet1 = createTestPet("bob", 101);
+        Pet pet2 = createTestPet("bob", 102);
+        Pet pet3 = createTestPet("carol", 103);
+        Pet pet4 = createTestPet("carol", 104);
+        Pet pet5 = createTestPet("carol", 105);
+        Pet pet6 = createTestPet("carol", 106);
+        Pet pet7 = createTestPet("carol", 107);
+        Pet pet8 = createTestPet("carol", 108);
+
+        List<Pet> mockSharedPetsNext = List.of(pet8);
+
+        List<Pet> mockSharedPetsNextAfter = List.of();
+        List<Pet> mockSharedPetsPreviousAfter = List.of(pet3, pet4, pet5, pet6, pet7);
+
+        when(petRepository.findNextSharedPets(107, 5)).thenReturn(mockSharedPetsNext);
+
+        when(petRepository.findNextSharedPets(108, 5)).thenReturn(mockSharedPetsNextAfter);
+        when(petRepository.findPreviousSharedPets(108, 5)).thenReturn(mockSharedPetsPreviousAfter);
+
+        Map<String, Object> result = petManagerService.getSharedPets(107, "next");
+
+        assertTrue(result.containsKey("pets"));
+        assertTrue(result.containsKey("hasPrevious"));
+        assertTrue(result.containsKey("hasNext"));
+
+        @SuppressWarnings("unchecked")
+        List<Pet> resultPets = (List<Pet>) result.get("pets");
+
+        assertEquals(1, resultPets.size());
+        assertFalse((Boolean) result.get("hasNext"));
+        assertTrue((Boolean) result.get("hasPrevious"));
+    }
+
+    @Test
+    void testGetSharedPetsWhenGoingToPreviousAndThenHavingNothingPrevious() {
+        Pet pet1 = createTestPet("bob", 101);
+        Pet pet2 = createTestPet("bob", 102);
+        Pet pet3 = createTestPet("carol", 103);
+        Pet pet4 = createTestPet("carol", 104);
+        Pet pet5 = createTestPet("carol", 105);
+        Pet pet6 = createTestPet("carol", 106);
+        Pet pet7 = createTestPet("carol", 107);
+        Pet pet8 = createTestPet("carol", 108);
+
+        List<Pet> mockSharedPetsPrevious = List.of(pet1);
+
+        List<Pet> mockSharedPetsNextAfter = List.of(pet2, pet3, pet4, pet5, pet6);
+        List<Pet> mockSharedPetsPreviousAfter = List.of();
+
+        when(petRepository.findPreviousSharedPets(102, 5)).thenReturn(mockSharedPetsPrevious);
+
+        when(petRepository.findNextSharedPets(101, 5)).thenReturn(mockSharedPetsNextAfter);
+        when(petRepository.findPreviousSharedPets(101, 5)).thenReturn(mockSharedPetsPreviousAfter);
+
+        Map<String, Object> result = petManagerService.getSharedPets(102, "previous");
+
+        assertTrue(result.containsKey("pets"));
+        assertTrue(result.containsKey("hasPrevious"));
+        assertTrue(result.containsKey("hasNext"));
+
+        @SuppressWarnings("unchecked")
+        List<Pet> resultPets = (List<Pet>) result.get("pets");
+
+        assertEquals(1, resultPets.size());
+        assertTrue((Boolean) result.get("hasNext"));
+        assertFalse((Boolean) result.get("hasPrevious"));
+    }
+
+    @Test
+    void testGetSharedPetsWhenGoingToPreviousAndThenHavingPrevious() {
+        Pet pet0 = createTestPet("bob", 100);
+        Pet pet1 = createTestPet("bob", 101);
+        Pet pet2 = createTestPet("bob", 102);
+        Pet pet3 = createTestPet("carol", 103);
+        Pet pet4 = createTestPet("carol", 104);
+        Pet pet5 = createTestPet("carol", 105);
+        Pet pet6 = createTestPet("carol", 106);
+        Pet pet7 = createTestPet("carol", 107);
+        Pet pet8 = createTestPet("carol", 108);
+
+        List<Pet> mockSharedPetsPrevious = List.of(pet1);
+
+        List<Pet> mockSharedPetsNextAfter = List.of(pet2, pet3, pet4, pet5, pet6);
+        List<Pet> mockSharedPetsPreviousAfter = List.of(pet0);
+
+        when(petRepository.findPreviousSharedPets(102, 5)).thenReturn(mockSharedPetsPrevious);
+
+        when(petRepository.findNextSharedPets(101, 5)).thenReturn(mockSharedPetsNextAfter);
+        when(petRepository.findPreviousSharedPets(101, 5)).thenReturn(mockSharedPetsPreviousAfter);
+
+        Map<String, Object> result = petManagerService.getSharedPets(102, "previous");
+
+        assertTrue(result.containsKey("pets"));
+        assertTrue(result.containsKey("hasPrevious"));
+        assertTrue(result.containsKey("hasNext"));
+
+        @SuppressWarnings("unchecked")
+        List<Pet> resultPets = (List<Pet>) result.get("pets");
+
+        assertEquals(1, resultPets.size());
+        assertTrue((Boolean) result.get("hasNext"));
+        assertTrue((Boolean) result.get("hasPrevious"));
+    }
+
+    @Test
+    void testGetSharedPetsWhenTryingNextAndHavingNoNext() {
+        Pet pet1 = createTestPet("bob", 101);
+        Pet pet2 = createTestPet("carol", 102);
+        List<Pet> mockSharedPets = List.of(pet1, pet2);
+
+        when(petRepository.findNextSharedPets(103, 5)).thenReturn(List.of());
+        when(petRepository.findPreviousSharedPets(101, 5)).thenReturn(mockSharedPets);
+
+        Map<String, Object> result = petManagerService.getSharedPets(103, "next");
+
+        assertTrue(result.containsKey("pets"));
+        assertTrue(result.containsKey("hasPrevious"));
+        assertTrue(result.containsKey("hasNext"));
+
+        @SuppressWarnings("unchecked")
+        List<Pet> resultPets = (List<Pet>) result.get("pets");
+
+        assertEquals(0, resultPets.size());
+        assertFalse((Boolean) result.get("hasNext"));
+        assertFalse((Boolean) result.get("hasPrevious"));
+    }
+
+    @Test
+    void testGetSharedPetsWhenTryingPreviousAndHavingNoPrevious() {
+        Pet pet1 = createTestPet("bob", 104);
+        Pet pet2 = createTestPet("carol", 105);
+        List<Pet> mockSharedPets = List.of(pet1, pet2);
+
+        when(petRepository.findNextSharedPets(103, 5)).thenReturn(mockSharedPets);
+        when(petRepository.findPreviousSharedPets(103, 5)).thenReturn(List.of());
+
+        Map<String, Object> result = petManagerService.getSharedPets(103, "Previous");
+
+        assertTrue(result.containsKey("pets"));
+        assertTrue(result.containsKey("hasPrevious"));
+        assertTrue(result.containsKey("hasNext"));
+
+        @SuppressWarnings("unchecked")
+        List<Pet> resultPets = (List<Pet>) result.get("pets");
+
+        assertEquals(0, resultPets.size());
+        assertFalse((Boolean) result.get("hasNext"));
+        assertFalse((Boolean) result.get("hasPrevious"));
+    }
+
 }
