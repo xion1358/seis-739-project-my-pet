@@ -1,13 +1,47 @@
 # My Pet Project Details
 
-This project is the front end for the My Pet project. The purpose of this front end is to send and receive requests to from the server to:
-- Manage pets
+This project is the front end for the My Pet project. The purpose of this front end is to send to and receive data from the server to:
+- Allow users to request management action on pets
+- Allow users to interact with pets
 - Render pets
 
-To make use of this project, the backend server must be running to send and receive data from the server.
+To make use of this project, the backend server must be running to send and receive data from the server. Which is included in the same repository as this frontend.
+<br/><br/>
 
-This project makes use of the Phaser + Angular template.
-What follows are details of the template and how to work with the template as originally detailed by the Phaser team. Note: not everything may be applicable to this project, but as respect to the original releasers I've kept all the details below.
+# Developer
+The technology tools used/incorporated to build this application include (but not limited to):
+- Angular (https://angular.dev/)
+- Phaser (https://phaser.io/)
+- Visual Studio Code (https://code.visualstudio.com/)
+<br/><br/>
+
+To see the api endpoints please check the API documentation at:  
+https://documenter.getpostman.com/view/42478987/2sB2j7epgV
+
+This project utilizes Angular. Please ensure you have Node.js/npm installed and also have the angular CLI installed. See the details at:  
+https://angular.dev/tools/cli
+
+To install any dependencies please run (at the root directory of the front end):
+```bash
+    npm install
+```
+
+To build and run the front end please run (at the root directory of the front end):
+```bash
+    ng serve
+```
+<br/>
+
+# Disclosures
+This application development did involve usage of LLMs which include actions such as (but not limited to):
+  - Coding (helping to build skeletal code)
+  - Debugging (helping to find issues)
+  - Testing (helping to develop test cases)
+
+This project makes use of the Phaser 3 + Angular template (https://phaser.io/news/2024/03/phaser-3-and-angular-template).  
+What follows are details of the template and how to work with the template as originally detailed by the Phaser team.   
+Note: not everything may be applicable to this project, but as courtesy and respect to the original releasers I've kept all the details below.
+<br/><br/>
 
 # Phaser Angular Template
 
