@@ -1,0 +1,78 @@
+@startuml
+
+left to right direction
+skinparam linetype ortho
+
+class PetBehaviorService {
+  + PetBehaviorService(PetFoodService, FoodRepository, PetRepository): 
+  - petFoodService: PetFoodService
+  - petRepository: PetRepository
+  - foodRepository: FoodRepository
+  - allPetActions: Map<Integer, PetBehavior>
+  - random: Random
+  - shouldPetForage(int): boolean
+  + updatePetBehavior(Pet): PetData
+  - handleEating(Pet, List<Food>): PetBehavior
+  - handleWandering(Pet): PetBehavior
+  - handleForaging(Pet, List<Food>): PetBehavior
+  - findClosestFood(Pet, List<Food>): Food
+  - generateBehavior(Pet, List<Food>): PetBehavior
+  - getPetBehavior(Pet): PetBehavior
+
+}
+class PetController {
+  + PetController(LoginService, RegistrationService, PetManagerService, PetFoodService, PetPlayService): 
+  + validate(HttpServletRequest): ResponseEntity<Void>
+  + registerPetForViewing(HttpServletRequest): ResponseEntity<Pet>
+  + createPetFood(HttpServletRequest): ResponseEntity<Boolean>
+  + getPets(HttpServletRequest): ResponseEntity<List<Pet>>
+  + login(LoginRequest): ResponseEntity<LoginResponse>
+  + getPetForOwner(HttpServletRequest): ResponseEntity<Boolean>
+  + petAPet(HttpServletRequest): ResponseEntity<Boolean>
+  + sharePet(HttpServletRequest): ResponseEntity<Boolean>
+  + getPetTypes(HttpServletRequest): ResponseEntity<List<PetTypes>>
+  + register(RegistrationRequest): ResponseEntity<RegistrationResponse>
+  + unsharePet(HttpServletRequest): ResponseEntity<Boolean>
+  + getSharedPets(HttpServletRequest): ResponseEntity<Map<String, Object>>
+  + abandonPet(HttpServletRequest): ResponseEntity<Boolean>
+}
+class PetFoodService {
+  + PetFoodService(PetRepository, FoodRepository): 
+  - petRepository: PetRepository
+  - foodRepository: FoodRepository
+  - allPetsFoods: Map<Integer, List<Food>>
+  + createPetFood(int, String): Boolean
+
+}
+class PetManagerService {
+  + PetManagerService(SimpMessagingTemplate, PetRepository, FoodRepository, PetFoodService, PetBehaviorService): 
+  + removeSubscriberBySessionId(String): void
+  + sharePet(String, int): Boolean
+  + getPets(String): ArrayList<Pet>
+  + generateANewPetForOwner(String, String, String): Boolean
+  - updatePet(Pet, int): PetData
+  + updatePetFromRepo(int): void
+  - cleanPetFromLoop(int): void
+  - startPetLoop(): void
+  + registerPet(String, int): Pet
+  + unsharePet(String, int): Boolean
+  + unregisterPet(int): void
+  + abandonPet(String, int): Boolean
+  - sendPetData(PetData, String): void
+  + getSharedPets(int, String): Map<String, Object>
+  + addSubscriber(int, String): void
+
+}
+class PetPlayService {
+  + PetPlayService(PetRepository, PetManagerService): 
+  + petAPet(int): Boolean
+}
+
+PetBehaviorService ..> PetFoodService     
+PetController      ..> PetFoodService     
+PetController      ..> PetManagerService  
+PetController      ..> PetPlayService     
+PetManagerService  ..> PetBehaviorService 
+PetManagerService  ..> PetFoodService     
+PetPlayService     ..> PetManagerService  
+@enduml

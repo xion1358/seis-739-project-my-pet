@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>com.mypetserver.mypetserver.dto.RegistrationResponse</OriginalElement>
+  <nodes>
+    <node x="-1930.7799009200285" y="479.9150743099791">com.mypetserver.mypetserver.services.RegistrationService</node>
+    <node x="-1915.3013800424628" y="1057.8333297947631">com.mypetserver.mypetserver.services.LoginService</node>
+    <node x="-2733.6876150035387" y="649.0619957537155">com.mypetserver.mypetserver.controllers.PetController</node>
+    <node x="-3073.0523708421797" y="551.6421797593773">com.mypetserver.mypetserver.dto.LoginRequest</node>
+    <node x="-1300.0292285916494" y="362.93446567586665">com.mypetserver.mypetserver.dto.RegistrationResponse</node>
+    <node x="-1915.3013800424628" y="768.5171974522291">com.mypetserver.mypetserver.services.OwnerService</node>
+    <node x="-3138.5523708421797" y="800.8719037508846">com.mypetserver.mypetserver.dto.RegistrationRequest</node>
+    <node x="-1547.6033947629153" y="672.5171974522291">com.mypetserver.mypetserver.services.TokenService</node>
+    <node x="-1279.2979476291584" y="1002.1365673036096">com.mypetserver.mypetserver.dto.LoginResponse</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="com.mypetserver.mypetserver.services.RegistrationService" target="com.mypetserver.mypetserver.dto.RegistrationResponse" relationship="CREATE">
+      <point x="245.5" y="-36.5" />
+      <point x="-1164.359483368719" y="487.4150743099791" />
+      <point x="-1164.359483368719" y="495.49547062986585" />
+      <point x="-163.0" y="3.561004953999202" />
+    </edge>
+    <edge source="com.mypetserver.mypetserver.services.RegistrationService" target="com.mypetserver.mypetserver.services.TokenService" relationship="TO_ONE">
+      <point x="238.0" y="44.0" />
+      <point x="-99.67650615711318" y="-104.0" />
+    </edge>
+    <edge source="com.mypetserver.mypetserver.services.LoginService" target="com.mypetserver.mypetserver.dto.LoginResponse" relationship="CREATE">
+      <point x="227.5" y="-6.6967624911535495" />
+      <point x="-1155.6691613588112" y="1107.1365673036096" />
+      <point x="-120.0" y="0.0" />
+    </edge>
+    <edge source="com.mypetserver.mypetserver.services.RegistrationService" target="com.mypetserver.mypetserver.services.OwnerService" relationship="TO_ONE">
+      <point x="-100.52147912243436" y="44.0" />
+      <point x="0.0" y="-56.0" />
+    </edge>
+    <edge source="com.mypetserver.mypetserver.controllers.PetController" target="com.mypetserver.mypetserver.services.LoginService" relationship="TO_ONE">
+      <point x="0.0" y="188.0000000000001" />
+      <point x="-2470.6876150035387" y="1113.8333297947631" />
+      <point x="-227.5" y="0.0" />
+    </edge>
+    <edge source="com.mypetserver.mypetserver.controllers.PetController" target="com.mypetserver.mypetserver.services.RegistrationService" relationship="TO_ONE">
+      <point x="0.0" y="-188.0" />
+      <point x="-2470.6876150035387" y="523.9150743099791" />
+      <point x="-245.5" y="0.0" />
+    </edge>
+    <edge source="com.mypetserver.mypetserver.services.LoginService" target="com.mypetserver.mypetserver.services.TokenService" relationship="TO_ONE">
+      <point x="220.0" y="-56.0" />
+      <point x="-120.19798527954754" y="104.0" />
+    </edge>
+    <edge source="com.mypetserver.mypetserver.services.LoginService" target="com.mypetserver.mypetserver.services.OwnerService" relationship="TO_ONE">
+      <point x="-98.0" y="-56.0" />
+      <point x="0.0" y="56.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Compact" zoom="0.9900504484304933" showDependencies="true" x="-1734.3613061571127" y="990.1487269639063" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Constructors</Category>
+    <Category>Fields</Category>
+    <Category>Inner Classes</Category>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

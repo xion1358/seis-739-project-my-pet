@@ -1,0 +1,57 @@
+@startuml
+
+top to bottom direction
+skinparam linetype ortho
+
+class Food {
+  + Food(int, FoodTypes, int, int): 
+  + Food(): 
+  - foodXLocation: int
+  - foodYLocation: int
+  - createdTimestamp: Timestamp
+  - foodType: FoodTypes
+  - petId: int
+  - foodId: int
+}
+class FoodTypes {
+  - FoodTypes(String, int, int): 
+  + FoodTypes(): 
+  - name: String
+  - satiateHunger: int
+  - satiateAffection: int
+  + getFoodTypeByName(String): FoodTypes
+}
+class Owner {
+  + Owner(): 
+  + Owner(String, String, String, String): 
+  - displayName: String
+  - username: String
+  - password: String
+  - email: String
+}
+class Pet {
+  + Pet(String, String, PetTypes, int, int, int, int, String, String, int): 
+  + Pet(): 
+  - petYLocation: int
+  - petAffectionLevel: int
+  - petXLocation: int
+  - petDirection: String
+  - petHungerLevel: int
+  - petAction: String
+  - petType: PetTypes
+  - petOwner: String
+  - shared: int
+  - petId: int
+  - petName: String
+}
+class PetTypes {
+  + PetTypes(String): 
+  + PetTypes(): 
+  - name: String
+  + getPetTypeByName(String): PetTypes
+}
+
+Food      "1" -- "*" FoodTypes 
+Pet       "1" -- "*" PetTypes
+Owner     "1" *--> "1" Pet
+@enduml

@@ -1,0 +1,107 @@
+@startuml
+
+left to right direction
+skinparam linetype ortho
+
+class LoginRequest {
+  + LoginRequest(String, String): 
+  - username: String
+  - password: String
+  + hashCode(): int
+  + equals(Object): boolean
+   password: String
+   username: String
+}
+class LoginResponse {
+  + LoginResponse(String, String): 
+  - token: String
+  - username: String
+  + equals(Object): boolean
+  + hashCode(): int
+   username: String
+   token: String
+}
+class LoginService {
+  + LoginService(AuthenticationManager, TokenService, OwnerService): 
+  + login(LoginRequest): ResponseEntity<LoginResponse>
+  - authenticate(String, String): String
+}
+class OwnerService {
+  + OwnerService(OwnerRepository): 
+  + saveOwner(Owner): void
+  + ownerExists(String): boolean
+}
+class PetController {
+  + PetController(LoginService, RegistrationService, PetManagerService, PetFoodService, PetPlayService): 
+  + createPetFood(HttpServletRequest): ResponseEntity<Boolean>
+  + getSharedPets(HttpServletRequest): ResponseEntity<Map<String, Object>>
+  + login(LoginRequest): ResponseEntity<LoginResponse>
+  + getPetTypes(HttpServletRequest): ResponseEntity<List<PetTypes>>
+  + sharePet(HttpServletRequest): ResponseEntity<Boolean>
+  + register(RegistrationRequest): ResponseEntity<RegistrationResponse>
+  + unsharePet(HttpServletRequest): ResponseEntity<Boolean>
+  + getPets(HttpServletRequest): ResponseEntity<List<Pet>>
+  + getPetForOwner(HttpServletRequest): ResponseEntity<Boolean>
+  + validate(HttpServletRequest): ResponseEntity<Void>
+  + registerPetForViewing(HttpServletRequest): ResponseEntity<Pet>
+  + petAPet(HttpServletRequest): ResponseEntity<Boolean>
+  + abandonPet(HttpServletRequest): ResponseEntity<Boolean>
+}
+class RegistrationRequest {
+  + RegistrationRequest(String, String, String, String): 
+  - displayName: String
+  - password: String
+  - email: String
+  - username: String
+  + hashCode(): int
+  + equals(Object): boolean
+   password: String
+   username: String
+   email: String
+   displayName: String
+}
+class RegistrationResponse {
+  + RegistrationResponse(String, String, String): 
+  - token: String
+  - message: String
+  - username: String
+  + equals(Object): boolean
+  + hashCode(): int
+   message: String
+   username: String
+   token: String
+}
+class RegistrationService {
+  + RegistrationService(OwnerService, TokenService, OwnerRepository): 
+  + register(RegistrationRequest): ResponseEntity<RegistrationResponse>
+}
+class TokenService {
+  + TokenService(): 
+  + validateJWTToken(String): boolean
+  + parseJWTToken(String): Claims
+  + generateToken(String): String
+  + getJWTToken(HttpServletRequest): String
+  + parseUsernameFromJWT(String): String
+  + validateParameters(HttpServletRequest, String): boolean
+}
+
+RegistrationRequest -[hidden]left- PetController
+LoginRequest -[hidden]right- PetController
+
+OwnerService -[hidden]down- TokenService
+
+RegistrationResponse -[hidden]left- RegistrationService
+LoginResponse -[hidden]right- LoginService
+
+PetController ..> RegistrationRequest : takes
+PetController ..> LoginRequest        : takes
+
+LoginService          ..>  LoginResponse        : returns
+LoginService         ..>  OwnerService         : uses
+LoginService         ..>  TokenService         : uses
+PetController        ..>  LoginService         
+PetController        ..>  RegistrationService
+RegistrationService  ..>  OwnerService         : uses
+RegistrationService   ..>  RegistrationResponse : returns
+RegistrationService  ..>  TokenService         : uses
+@enduml

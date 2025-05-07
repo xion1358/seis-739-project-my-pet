@@ -1,3 +1,14 @@
+# My Pet Project Details
+
+This project is the front end for the My Pet project. The purpose of this front end is to send and receive requests to from the server to:
+- Manage pets
+- Render pets
+
+To make use of this project, the backend server must be running to send and receive data from the server.
+
+This project makes use of the Phaser + Angular template.
+What follows are details of the template and how to work with the template as originally detailed by the Phaser team. Note: not everything may be applicable to this project, but as respect to the original releasers I've kept all the details below.
+
 # Phaser Angular Template
 
 This is a Phaser 3 project template that uses the Angular framework. It includes a bridge for Angular to Phaser game communication, hot-reloading for quick development workflow and scripts to generate production-ready builds.

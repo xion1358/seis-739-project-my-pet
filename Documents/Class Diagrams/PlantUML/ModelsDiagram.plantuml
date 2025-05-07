@@ -1,0 +1,36 @@
+@startuml
+
+top to bottom direction
+skinparam linetype ortho
+
+enum PetActions << enumeration >> {
+  - PetActions(String): 
+  - value: String
+  + valueOf(String): PetActions
+  + toString(): String
+  + fromValue(String): PetActions
+  + values(): PetActions[]
+
+}
+class PetBehavior {
+  + PetBehavior(long, PetActions): 
+  - timeToNextActionInMillis: long
+  - petAction: PetActions
+
+}
+class PetData {
+  + PetData(Pet, List<Food>, String, long): 
+  - petBehavior: String
+  - actionTime: long
+  - pet: Pet
+  - food: List<Food>
+}
+class User {
+  + User(String, String): 
+  - username: String
+  - password: String
+
+}
+
+PetBehavior "1" -- "*" PetActions  
+@enduml
