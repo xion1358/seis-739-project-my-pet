@@ -9,10 +9,6 @@ const config: Phaser.Types.Core.GameConfig = {
     type: AUTO,
     parent: 'game-container',
     backgroundColor: '#D9D9D9',
-    scene: [
-        Boot,
-        Preloader
-    ],
     scale: {
         mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH,
@@ -30,8 +26,14 @@ const StartGame = (parent: string,
     createFoodCallback: (petId: number, food: string) => void, 
     createPetAPetCallback: (petId: number) => void) => {
     const game = new Game({...config, parent});
+
+    // Declare our scenes here
+    game.scene.add('Boot', Boot, false);
+    game.scene.add('Preloader', Preloader, false);
     game.scene.add('MyPet', MyPet, false);
-    game.scene.start('MyPet', {
+
+    // Start the first scene
+    game.scene.start('Boot', {
         createPetFood: createFoodCallback,
         petAPet: createPetAPetCallback,
     });

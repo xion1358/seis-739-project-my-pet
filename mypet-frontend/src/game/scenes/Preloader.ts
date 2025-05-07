@@ -2,13 +2,17 @@ import { Scene } from 'phaser';
 
 export class Preloader extends Scene
 {
+    private sceneData: any;
+
     constructor ()
     {
         super('Preloader');
     }
 
-    init ()
+    init (data: any)
     {
+        this.sceneData = data;
+
         //  We loaded these images in our Boot Scene, so we can display it here
         this.add.image(300, 300, 'loading-background');
         this.add.image(380, 230, 'MyPetTitle').setOrigin(0.5).setScale(.3);
@@ -79,6 +83,6 @@ export class Preloader extends Scene
         //  For example, you can define global animations here, so we can use them in other scenes.
 
         //  Move to the Game. You could also swap this for a Scene Transition, such as a camera fade.
-        this.scene.start('MyPet');
+        this.scene.start('MyPet', this.sceneData);
     }
 }
