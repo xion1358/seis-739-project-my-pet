@@ -20,7 +20,6 @@ export class PhaserGame implements OnInit, OnDestroy {
     game: Phaser.Game;
     messageSub: Subscription;
 
-    // ✅ Define the callback ONCE at the class level to keep the same reference
     private _onSceneReady = (scene: Phaser.Scene) => {
         this.scene = scene;
 
@@ -65,7 +64,6 @@ export class PhaserGame implements OnInit, OnDestroy {
             this.game.destroy(true);
         }
         if (this.messageSub) {
-            console.log("Message unsub");
             this.messageSub.unsubscribe();
         }
         if (this._petService) {

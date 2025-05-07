@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Utility } from '../Utilities/Utility';
 import { Pet } from '../models/pet';
 import { Observable, Subject } from 'rxjs';
 import { Client, Message } from '@stomp/stompjs';
-import { FoodTypes } from '../models/foottypes';
 import { PetTypes } from '../models/pettypes';
+import { SharedPetsResponse } from '../models/shared-pets-response';
 
 @Injectable({
   providedIn: 'root'
@@ -107,7 +107,7 @@ export class PetService {
     this._http.post<boolean>(this._serverURL + "/create-pet-food", null, { headers, params })
         .subscribe({
             next: (response) => {
-                console.log('Food created successfully:', response);
+                //console.log('Food created successfully:', response);
             },
             error: (err) => {
                 console.error('Error creating food:', err);
@@ -122,7 +122,7 @@ export class PetService {
     this._http.post<boolean>(this._serverURL + "/pet-a-pet", null, { headers, params })
     .subscribe({
         next: (response) => {
-            console.log('Pet loved your pet!');
+            //console.log('Pet loved your pet!');
         },
         error: (err) => {
             console.error('Error trying to pet a pet:', err);
@@ -155,7 +155,6 @@ export class PetService {
     .subscribe({
         next: (response) => {
             if (response) {
-              console.log('Found a pet for you!');
               this._router.navigate(['/mypage']);
             } else {
               alert("Sorry, you have too many pets! Please let a pet go before requesting another one!");
@@ -176,19 +175,19 @@ export class PetService {
     return this._http.post<boolean>(this._serverURL + "/abandon-pet", null, { headers, params });
   }
 
-  public queryForSharedPets(cursor: number, pageDirection: string): Observable<Pet[]> {
+  public queryForSharedPets(cursor: number, pageDirection: string): Observable<SharedPetsResponse> {
     try {
       if (Utility.getTokenHeader() && Utility.getUserName()) {
         const headers = Utility.getTokenHeader();
         const params = new HttpParams().set('cursor', cursor).set('direction', pageDirection);
 
-        return this._http.get<Pet[]>(this._serverURL + "/get-shared-pets", {headers: headers, params: params});
+        return this._http.get<SharedPetsResponse>(this._serverURL + "/get-shared-pets", {headers: headers, params: params});
       }
     } catch (error: any) {
       console.error("Encountered error while trying to query pets: ", error.message);
     }
 
-    return new Observable<Pet[]>();
+    return new Observable<SharedPetsResponse>();
   }
 
   public shareThisPet(petId: number): Observable<boolean> {
@@ -207,5 +206,10 @@ export class PetService {
       .set('petId', petId);
   
     return this._http.post<boolean>(this._serverURL + "/unshare-pet", null, { headers, params });
+  }
+
+  // For testing purposes
+  public getStompClient(): Client {
+    return this._stompClient;
   }
 }

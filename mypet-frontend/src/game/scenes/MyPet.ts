@@ -151,7 +151,7 @@ export class MyPet extends Scene
 
         // Cleanup assets
         if (this.ground) {
-            console.log("Destroying ground");
+            //console.log("Destroying ground");
             this.ground.destroy();
         }
 

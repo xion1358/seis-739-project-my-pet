@@ -35,12 +35,12 @@ export class AuthenticationService {
         this.loggedInStatus.next(true);
         this._router.navigate(['/mypage']);
       },
-      error: (error: HttpErrorResponse) => {
+      error: (errorResponse: HttpErrorResponse) => {
         let errorMessage = "Error logging in. Please try again.";
   
-        if (error.error && Array.isArray(error.error)) {
+        if (errorResponse.error && Array.isArray(errorResponse.error)) {
           let validationErrorMessages = 'Invalid input: \n';
-          error.error.forEach((message: string) => {
+          errorResponse.error.forEach((message: string) => {
             validationErrorMessages += `${message}\n`;
           });
           errorMessage = validationErrorMessages;
@@ -55,36 +55,38 @@ export class AuthenticationService {
    * Initializes registration in server side through an api call
    */
   public registration(data: string[]): void {
-
-    const body = {username: data[0], displayName: data[1], email: data[2], password: data[3]};
+    const body = { username: data[0], displayName: data[1], email: data[2], password: data[3] };
 
     this._http.post(this._serverURL + "/registration", body)
-  .subscribe({
-    next: (res: any) => {
-      this.saveData(res);
-      this.loggedInStatus.next(true);
-      this._router.navigate(['/mypage']);
-    },
-    error: (error: HttpErrorResponse) => {
-      let errorMessage = "Error registering. Please try again.";
+      .subscribe({
+        next: (res: any) => {
+          this.saveData(res);
+          this.loggedInStatus.next(true);
+          this._router.navigate(['/mypage']);
+        },
+        error: (errorResponse: HttpErrorResponse) => {
+          let errorMessage = "Error registering. Please try again.";
 
-      if (error.error && Array.isArray(error.error)) {
-        let validationErrorMessages = 'Invalid input: \n';
-        error.error.forEach((message: string) => {
-          validationErrorMessages += `${message}\n`;
-        });
-        errorMessage = validationErrorMessages;
-      } else if (error.status === 400 && error.error && typeof error.error === 'object') {
-        errorMessage = `Error registering: ${error.error.message}`;
-      } else if (error.status === 500) {
-        errorMessage = "A server error occurred. Please try again later.";
-      } else if (error.status === 409 && error.error?.message) {
-        errorMessage = error.error.message;
-      }
+          if (errorResponse.error && Array.isArray(errorResponse.error)) {
+            let validationErrorMessages = 'Invalid input: \n';
+            errorResponse.error.forEach((message: string) => {
+              validationErrorMessages += `${message}\n`;
+            });
+            errorMessage = validationErrorMessages;
 
-      alert(errorMessage);
-    }
-  });
+          } else if (errorResponse.status === 400 && errorResponse.error && typeof errorResponse.error === 'object') {
+              errorMessage = `Error registering: ${errorResponse.error.message}`;
+
+          } else if (errorResponse.status === 500) {
+              errorMessage = "A server error occurred. Please try again later.";
+
+          } else if (errorResponse.status === 409 && errorResponse.error?.message) {
+            errorMessage = errorResponse.error.message;
+          }
+
+          alert(errorMessage);
+        }
+      });
 
   }
 

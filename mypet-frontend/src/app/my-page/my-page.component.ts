@@ -79,7 +79,7 @@ export class MyPageComponent {
     this._petService.queryForPets().subscribe({
       next: (pets: Pet[]) => {
         this.myPets = pets;
-        this.myPets.sort((pet1, pet2) => pet2.petId - pet1.petId);
+        this.myPets.sort((pet1, pet2) => pet1.petId- pet2.petId);
         const current = this.selectedPet;
         if (current != null) {
           this.selectedPet = this.myPets.find(pet => pet.petId === current.petId) || null;
