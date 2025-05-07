@@ -78,22 +78,36 @@ describe('PhaserGame', () => {
       scene: mockSceneManager,
       destroy: jasmine.createSpy('destroy'),
     } as unknown as Phaser.Game;
+
     const gameSpy = spyOn(Phaser, 'Game').and.returnValue(mockGameInstance);
-  
+
     component.ngOnInit();
-  
+
     expect(gameSpy).toHaveBeenCalledWith(
       jasmine.objectContaining({
+        type: 0,
         parent: 'game-container',
-        scene: jasmine.any(Array)
+        backgroundColor: '#D9D9D9', 
+        scale: {
+          mode: Phaser.Scale.RESIZE,
+          autoCenter: Phaser.Scale.CENTER_BOTH
+        },
+        physics: {
+          default: "arcade",
+          arcade: {
+            gravity: { x: 0, y: 500 },
+            debug: false
+          }
+        }
       })
     );
+
     expect(mockSceneManager.add).toHaveBeenCalledWith('MyPet', MyPet, false);
-    expect(mockSceneManager.start).toHaveBeenCalledWith('MyPet', {
+    expect(mockSceneManager.start).toHaveBeenCalledWith('Boot', {
       createPetFood: jasmine.any(Function),
       petAPet: jasmine.any(Function),
     });
-  
+
     expect(component.game).toBe(mockGameInstance);
   });
 
