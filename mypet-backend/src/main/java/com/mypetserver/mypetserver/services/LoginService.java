@@ -9,6 +9,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,18 +20,25 @@ import org.springframework.stereotype.Service;
 public class LoginService {
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
+    private final OwnerService ownerService;
 
     @Autowired
     public LoginService(AuthenticationManager authenticationManager,
-                        TokenService tokenService) {
+                        TokenService tokenService,
+                        OwnerService ownerService) {
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
+        this.ownerService = ownerService;
     }
 
-    public ResponseEntity<LoginResponse> login(LoginRequest loginRequest) {
-        String token = authenticate(loginRequest.getUsername(), loginRequest.getPassword());
-        return ResponseEntity.ok(
-                new LoginResponse(loginRequest.getUsername(), token));
+    public ResponseEntity<LoginResponse> login(LoginRequest loginRequest) throws AuthenticationException {
+        if (this.ownerService.ownerExists(loginRequest.getUsername())) {
+            String token = authenticate(loginRequest.getUsername(), loginRequest.getPassword());
+            return ResponseEntity.ok(
+                    new LoginResponse(loginRequest.getUsername(), token));
+        } else {
+            throw new UsernameNotFoundException("User not found for login");
+        }
     }
 
     private String authenticate(String username, String password) throws AuthenticationException {

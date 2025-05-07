@@ -34,4 +34,8 @@ public class OwnerService {
             throw e;
         }
     }
+
+    public boolean ownerExists(String owner) {
+        return ownerRepository.findOwnerByUsername(owner) != null;
+    }
 }

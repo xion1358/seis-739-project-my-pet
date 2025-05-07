@@ -8,7 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class OwnerServiceTest {
@@ -40,7 +40,6 @@ public class OwnerServiceTest {
 
     @Test
     public void testSaveOwnerWhenSaveFails() {
-        // Given
         Owner owner = new Owner(
                 "mockOwner",
                 "mockDisplayName",
@@ -59,7 +58,6 @@ public class OwnerServiceTest {
 
         verify(ownerRepository, times(1)).save(owner);
     }
-
 
     @Test
     public void testSaveOwnerWhenOwnerAlreadyExists() {
@@ -88,4 +86,25 @@ public class OwnerServiceTest {
         verify(ownerRepository, never()).save(any());
     }
 
+    @Test
+    public void testOwnerExistsWhenOwnerExists() {
+        String username = "existingOwner";
+        Owner existingOwner = new Owner(username, "displayName", "email@example.com", "password");
+
+        when(ownerRepository.findOwnerByUsername(username)).thenReturn(existingOwner);
+
+        boolean result = ownerService.ownerExists(username);
+
+        assertTrue(result, "Owner should exist");
+    }
+
+    @Test
+    public void testOwnerExistsWhenOwnerDoesNotExist() {
+        String username = "nonExistingOwner";
+        when(ownerRepository.findOwnerByUsername(username)).thenReturn(null);
+
+        boolean result = ownerService.ownerExists(username);
+
+        assertFalse(result, "Owner should not exist");
+    }
 }

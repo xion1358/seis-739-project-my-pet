@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 
@@ -29,6 +30,9 @@ public class LoginServiceTest {
     @MockitoBean
     private TokenService tokenService;
 
+    @MockitoBean
+    private OwnerService ownerService;
+
     @Test
     public void testLoginSuccess() {
         String username = "testUser";
@@ -39,6 +43,7 @@ public class LoginServiceTest {
         Authentication mockAuthentication = mock(Authentication.class);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(mockAuthentication);
+        when(ownerService.ownerExists(username)).thenReturn(true);
         when(mockAuthentication.isAuthenticated()).thenReturn(true);
         when(tokenService.generateToken(username)).thenReturn(expectedToken);
 
@@ -51,10 +56,11 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void testLoginFailed() {
+    public void testLoginFailedDueToBadCredentials() {
         String username = "testUser";
         String password = "badPassword";
 
+        when(ownerService.ownerExists(username)).thenReturn(true);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
                 .thenThrow(new BadCredentialsException("Authentication failed"));
 
@@ -64,6 +70,22 @@ public class LoginServiceTest {
             loginService.login(loginRequest);
         } catch (BadCredentialsException e) {
             assertEquals("Authentication failed", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testLoginFailedDueToOwnerNotFound() {
+        String username = "testUser";
+        String password = "badPassword";
+
+        when(ownerService.ownerExists(username)).thenReturn(false);
+
+        LoginRequest loginRequest = new LoginRequest(username, password);
+
+        try {
+            loginService.login(loginRequest);
+        } catch (UsernameNotFoundException e) {
+            assertEquals("User not found for login", e.getMessage());
         }
     }
 
