@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * This service class is used to manage the pet food. Which includes, but is not limited to, pet food generation.
+ */
 @Getter
 @Service
 public class PetFoodService {

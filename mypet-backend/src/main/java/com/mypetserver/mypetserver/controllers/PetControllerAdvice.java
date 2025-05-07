@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This Class defines a controller advice which handles input validation error messages to be sent back to requester.
+ */
 @RestControllerAdvice
 public class PetControllerAdvice {
 

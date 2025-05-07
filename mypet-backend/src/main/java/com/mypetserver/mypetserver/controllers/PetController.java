@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This Class defines RESTful APIs for requests to the server
+ * This Class defines RESTful APIs for requests to the server.
  */
 @RestController
 public class PetController {
@@ -45,9 +45,14 @@ public class PetController {
         this.petPlayService = petPlayService;
     }
 
-    // Post requests
+    /**
+     * Attempts to authenticate the user's given request against stored credentials.
+     * @param loginRequest DTO detailing the login request object. Contains username and password.
+     * @return LoginResponse DTO detailing login response object. Contains username and token.
+     */
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+
         try {
             return this.loginService.login(loginRequest);
         } catch (Exception e) {
@@ -57,6 +62,14 @@ public class PetController {
 
     }
 
+    /**
+     * Attempts to register the user's given credentials.
+     * @param registrationRequest DTO detailing registration request object. Contains username, displayName,
+     *                            email, and password.
+     *
+     * @return RegistrationResponse DTO detailing the registration response object. Contains username, token, and
+     * a helpful message (on success or failure).
+     */
     @PostMapping("/registration")
     public ResponseEntity<RegistrationResponse> register(@Valid @RequestBody RegistrationRequest registrationRequest) {
         try {
@@ -70,19 +83,34 @@ public class PetController {
         }
     }
 
-
-    // Simply return ok as the filter will handle the validation when the request comes in
+    /**
+     * Endpoint for validation requests. Send requests here to limit the user's access. Only returns success because
+     * sprint boot security filter checks the token before getting here. If you arrive here, you have been validated.
+     * @param request http request containing the token in the authorization header.
+     * @return http response 200.
+     */
     @PostMapping("/validate")
     public ResponseEntity<Void> validate(HttpServletRequest request) {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Attempts to get the given owners pets.
+     * @param request http request containing the owner's username.
+     * @return list of pets belonging to the given owner.
+     */
     @GetMapping("/get-pets")
     public ResponseEntity<List<Pet>> getPets(HttpServletRequest request) {
         ArrayList<Pet> pets = this.petManagerService.getPets(request.getParameter("owner"));
         return ResponseEntity.ok(pets);
     }
 
+    /**
+     * Attempts to register a given pet id for viewing. Pets should be registered for viewing so that they are put
+     * in the game loop for evaluation of behaviors and generation of actions.
+     * @param request http request containing the owner's username, and pet id number.
+     * @return pet that was successfully registered, or an unauthorized status.
+     */
     @PostMapping("/register-pet-for-viewing")
     public ResponseEntity<Pet> registerPetForViewing(HttpServletRequest request) {
         String ownerName = request.getParameter("owner");
@@ -93,23 +121,43 @@ public class PetController {
         return (registeredPet != null) ? ResponseEntity.ok(registeredPet) : ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
+    /**
+     * Attempts to create food for a given pet.
+     * @param request http request containing pet id to create for and the type of food to create.
+     * @return boolean true if food created, else false.
+     */
     @PostMapping("/create-pet-food")
     public ResponseEntity<Boolean> createPetFood(HttpServletRequest request) {
         logger.info("Creating pet food for {}", request.getParameter("id"));
         return ResponseEntity.ok(this.petFoodService.createPetFood(Integer.parseInt(request.getParameter("id")), request.getParameter("food")));
     }
 
+    /**
+     * Attempts to pet a pet (to raise affection).
+     * @param request http request containing pet id.
+     * @return boolean true if pet was successful, else false.
+     */
     @PostMapping("/pet-a-pet")
     public ResponseEntity<Boolean> petAPet(HttpServletRequest request) {
         logger.info("Petting pet {}", request.getParameter("id"));
         return ResponseEntity.ok(this.petPlayService.petAPet(Integer.parseInt(request.getParameter("id"))));
     }
 
+    /**
+     * Attempts to get the pet types defined by the server.
+     * @param request http request. No body element necessary.
+     * @return the types of pets defined by the server.
+     */
     @PostMapping("/pet-types")
     public ResponseEntity<List<PetTypes>> getPetTypes(HttpServletRequest request) {
         return ResponseEntity.ok(this.petManagerService.getAllPetTypes());
     }
 
+    /**
+     * Attempts to generate a pet for a given owner.
+     * @param request http request containing name of owner, petName, and petType.
+     * @return boolean true if pet was generated successfully, else false.
+     */
     @PostMapping("/request-a-pet")
     public ResponseEntity<Boolean> getPetForOwner(HttpServletRequest request) {
         String ownerName = request.getParameter("owner");
@@ -118,6 +166,11 @@ public class PetController {
         return ResponseEntity.ok(this.petManagerService.generateANewPetForOwner(ownerName, petName, petType));
     }
 
+    /**
+     * Attempts to remove a given pet from the database. Note: only the original owner can remove a pet.
+     * @param request http request containing name of owner, and petID.
+     * @return boolean true if pet was removed successfully, else false.
+     */
     @PostMapping("/abandon-pet")
     public ResponseEntity<Boolean> abandonPet(HttpServletRequest request) {
         String ownerName = request.getParameter("owner");
@@ -125,6 +178,12 @@ public class PetController {
         return ResponseEntity.ok(this.petManagerService.abandonPet(ownerName, petId));
     }
 
+    /**
+     * Attempts to get the next or previous shared pets. Should be used to display the pets available for viewing.
+     * @param request http request containing a cursor (the current index) and the direction (where to move the cursor)
+     * @return a map containing the pets (to be viewed), hasPrevious (if this new view can go to previous),
+     * hasNext (if this new view can go next).
+     */
     @GetMapping("/get-shared-pets")
     public ResponseEntity<Map<String, Object>> getSharedPets(HttpServletRequest request) {
         String cursorParam = request.getParameter("cursor");
@@ -149,6 +208,11 @@ public class PetController {
         return ResponseEntity.ok(petsAndCursorStatus);
     }
 
+    /**
+     * Attempts to share a given pet.
+     * @param request http request containing the name of the owner, and the petId.
+     * @return boolean true if pet was shared successfully, else false.
+     */
     @PostMapping("/share-pet")
     public ResponseEntity<Boolean> sharePet(HttpServletRequest request) {
         String ownerName = request.getParameter("owner");
@@ -156,6 +220,11 @@ public class PetController {
         return ResponseEntity.ok(this.petManagerService.sharePet(ownerName, petId));
     }
 
+    /**
+     * Attempts to unshare a given pet.
+     * @param request http request containing the name of the owner, and the petId.
+     * @return boolean true if pet was unshared successfully, else false.
+     */
     @PostMapping("/unshare-pet")
     public ResponseEntity<Boolean> unsharePet(HttpServletRequest request) {
         String ownerName = request.getParameter("owner");

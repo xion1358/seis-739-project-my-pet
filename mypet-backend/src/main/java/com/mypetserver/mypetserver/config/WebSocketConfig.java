@@ -21,6 +21,9 @@ import org.springframework.web.socket.config.annotation.*;
 
 import java.util.List;
 
+/**
+ * This Class defines the websocket broker which take care of configuring the initial websocket settings.
+ */
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {

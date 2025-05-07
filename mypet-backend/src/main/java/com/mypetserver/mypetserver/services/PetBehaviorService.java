@@ -15,6 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+/**
+ * This service class is used to manage the pet behavior. Which includes, but is not limited to, pet behavior generation.
+ */
 @Getter
 @Service
 public class PetBehaviorService {

@@ -10,6 +10,10 @@ import lombok.Getter;
 
 import java.util.Objects;
 
+/**
+ * Defines RegistrationRequest object class for representing registration requests that come in.
+ * Utilizes Spring Boots Jackson deserialization when the object is coming from the front end
+ */
 @Getter
 public class RegistrationRequest {
 

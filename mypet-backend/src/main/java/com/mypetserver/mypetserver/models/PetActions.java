@@ -1,5 +1,8 @@
 package com.mypetserver.mypetserver.models;
 
+/**
+ * This enum describes the possible pet actions available. Is used in pet action generation in the pet loop.
+ */
 public enum PetActions {
     MOVING("moving"),
     FORAGING("foraging"),

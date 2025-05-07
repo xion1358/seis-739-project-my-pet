@@ -9,8 +9,7 @@ import com.mypetserver.mypetserver.repository.PetRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.security.core.parameters.P;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -18,7 +17,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-@Component
+/**
+ * This service class is used to manage the pet in general. It utilizes other services to manage specific parts.
+ * This service manages the high level pet game loop.
+ */
+@Service
 public class PetManagerService {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 

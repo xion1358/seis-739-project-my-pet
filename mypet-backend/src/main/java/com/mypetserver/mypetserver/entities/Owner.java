@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * This class defines the owner interfacing entity for the owner in a database repository
+ * This class defines the owner entity. The below attributes are represented in the database.
  */
 @Getter
 @Setter

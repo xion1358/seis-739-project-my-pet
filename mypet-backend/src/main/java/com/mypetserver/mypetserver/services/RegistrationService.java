@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service class which manages user registration.
+ */
 @Service
 public class RegistrationService {
     private final OwnerService ownerService;

@@ -9,6 +9,9 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * This class defines the food types entity. The below attributes are represented in the database.
+ */
 @Setter
 @Getter
 @Entity

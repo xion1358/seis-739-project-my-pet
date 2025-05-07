@@ -4,6 +4,9 @@ import com.mypetserver.mypetserver.repository.PetRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service class which manages pet play actions. Currently only manages the pets. Planned to do other activities.
+ */
 @Service
 public class PetPlayService {
     private final PetRepository petRepository;

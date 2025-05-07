@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * This class defines the service which manages interactions between the server and the owners repo
+ * This class defines the service which manages interactions between the server and the owners repository (table)
  */
 @Service
 public class OwnerService {

@@ -9,6 +9,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
+/**
+ * This class defines a websocket listener. Helps to send updates to the game loop to clean the state of pets
+ * pets by capturing subscription/unsubscription/disconnect events.
+ */
 @Component
 public class WebSocketEventListener {
 

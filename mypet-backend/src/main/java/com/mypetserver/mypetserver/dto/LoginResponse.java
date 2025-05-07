@@ -7,7 +7,7 @@ import lombok.Getter;
 import java.util.Objects;
 
 /**
- * Defines LoginResponse object class for representing login requests that come in.
+ * Defines LoginResponse object class for representing login responses that go out.
  * Utilizes Spring Boots Jackson serialization when the object is returned to the front end
  */
 @Getter

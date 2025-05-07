@@ -6,6 +6,10 @@ import lombok.Getter;
 
 import java.util.Objects;
 
+/**
+ * Defines RegistrationResponse object class for representing registration requests that go out.
+ * Utilizes Spring Boots Jackson serialization when the object going to the front end
+ */
 @Getter
 public class RegistrationResponse {
     private final String username;

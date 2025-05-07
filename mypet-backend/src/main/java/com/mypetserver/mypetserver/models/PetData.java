@@ -6,6 +6,10 @@ import lombok.Getter;
 
 import java.util.List;
 
+/**
+ * This class describes the pet data that is required for viewing a pet.
+ * It is essential pet data for rendering a basic pet in the frontend.
+ */
 @Getter
 public class PetData {
     private final Pet pet;

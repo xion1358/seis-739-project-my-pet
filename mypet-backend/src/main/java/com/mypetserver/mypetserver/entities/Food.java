@@ -6,6 +6,9 @@ import lombok.Setter;
 
 import java.sql.Timestamp;
 
+/**
+ * This class defines the food entity. The below attributes are represented in the database.
+ */
 @Getter
 @Setter
 @Entity

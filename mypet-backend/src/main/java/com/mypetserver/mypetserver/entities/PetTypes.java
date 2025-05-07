@@ -6,6 +6,9 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * This class defines the pet types entity. The below attributes are represented in the database.
+ */
 @Getter
 @Setter
 @Entity
