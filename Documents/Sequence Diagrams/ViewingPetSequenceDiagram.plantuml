@@ -1,15 +1,13 @@
 @startuml
 actor User
 
-participant "PetController" as Controller
 participant "WebSocketBroker" as Broker
 participant "PetManagerService" as Service
 
-User -> Controller : HTTP request to connect WebSocket
-Controller --> User : connected
+User -> Broker : HTTP request to connect WebSocket
+Broker --> User : connected
 
-User -> Controller : HTTP request to subscribe to topic/petId
-Controller -> Broker : subscribe to topic/petId
+User -> Broker : Subscribe to topic/petId
 
 loop data stream
     Service -> Broker : send data to topic/petId

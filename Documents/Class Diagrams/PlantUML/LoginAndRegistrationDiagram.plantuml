@@ -85,8 +85,8 @@ class TokenService {
   + validateParameters(HttpServletRequest, String): boolean
 }
 
-RegistrationRequest -[hidden]left- PetController
-LoginRequest -[hidden]right- PetController
+RegistrationRequest -[hidden]right- PetController
+LoginRequest -[hidden]left- PetController
 
 OwnerService -[hidden]down- TokenService
 
@@ -99,8 +99,8 @@ PetController ..> LoginRequest        : takes
 LoginService          ..>  LoginResponse        : returns
 LoginService         ..>  OwnerService         : uses
 LoginService         ..>  TokenService         : uses
-PetController        ..>  LoginService         
-PetController        ..>  RegistrationService
+PetController        ..>  LoginService         : uses
+PetController        ..>  RegistrationService  : uses
 RegistrationService  ..>  OwnerService         : uses
 RegistrationService   ..>  RegistrationResponse : returns
 RegistrationService  ..>  TokenService         : uses
