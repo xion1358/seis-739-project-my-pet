@@ -1,0 +1,11 @@
+@startuml
+actor User
+
+participant "PetController" as Controller
+participant "LoginService" as Service
+
+User -> Controller : send LoginRequest
+Controller -> Service : login(request)
+Service --> Controller : LoginResponse
+Controller --> User : return LoginResponse
+@enduml

@@ -1,0 +1,11 @@
+@startuml
+actor User
+
+participant "PetController" as Controller
+participant "RegistrationService" as Service
+
+User -> Controller : send RegistrationRequest
+Controller -> Service : register(request)
+Service --> Controller : RegistrationResponse
+Controller --> User : return RegistrationResponse
+@enduml

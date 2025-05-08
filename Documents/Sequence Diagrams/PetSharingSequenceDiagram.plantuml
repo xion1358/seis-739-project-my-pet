@@ -1,0 +1,14 @@
+@startuml
+actor User
+
+participant "PetController" as Controller
+participant "PetManagerService" as Service
+database "Database" as DB
+
+User -> Controller : HTTP request to share pet
+Controller -> Service : sharePet(owner, petId)
+Service -> DB : petRepository.save(set shared=1)
+DB --> Service : success
+Service --> Controller : true
+Controller --> User : true
+@enduml
