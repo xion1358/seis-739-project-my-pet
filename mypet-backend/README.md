@@ -17,6 +17,7 @@ Please note: many API endpoints require authentication.
 The technology tools used/incorporated to build this application include (but not limited to):
 - Spring Boot (https://spring.io/projects/spring-boot) with Java
 - Intellij (https://www.jetbrains.com/idea/)
+- MySQL (https://www.mysql.com/)
 
 NOTE: 
 - This application does NOT set up a database for you. Please setup a database separately.  
