@@ -13,6 +13,7 @@ The technology tools used/incorporated to build this application include (but no
 - Angular (https://angular.dev/)
 - Phaser (https://phaser.io/)
 - Visual Studio Code (https://code.visualstudio.com/)
+- Piskel to create pixel art used (https://www.piskelapp.com/)
 <br/><br/>
 
 To see the api endpoints please check the API documentation at:  
